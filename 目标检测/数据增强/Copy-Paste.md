@@ -136,6 +136,20 @@
 ### 4.6. Copy-Paste produces better representations for PASCAL detection and segmentation Copy-Paste在PASCAL检测和分割的任务上产生了更好的效果
 在之前的研究中，我们已经展示了简单的复制-粘贴增强对实例分割的改进性能。在本节中，我们研究了使用复制-粘贴在COCO上训练的预训练实例分割模型的迁移学习性能。我们在PASCAL VOC 2007数据集上进行了迁移学习实验。表5展示了学习到的复制-粘贴模型在PASCAL检测任务上与基线模型的对比结果。表6也展示了PASCAL语义分割任务的迁移学习结果。在PASCAL检测和PASCAL语义分割任务中，我们发现使用复制-粘贴训练的模型相比基线模型更适合进行微调的迁移学习。 
 
+### 4.7. Copy-Paste provides strong gains on LVIS Copy-Paste为LVIS提供了巨大的增益
+我们在LVIS数据集上对Copy-Paste进行基准测试，以了解其在具有长尾分布的1203个类别的数据集上的表现。LVIS通常使用两种不同的训练范式：（1）单阶段，在该范式中，检测器直接在LVIS数据集上进行训练；（2）双阶段，在该范式中，第一阶段的模型经过细调，并采用类别重新平衡损失来帮助处理类别不平衡问题。
+
+**Copy-Paste improves single-stage LVIS training. Copy-Paste改进了单阶段LVIS训练**
+单阶段训练范式与我们在COCO上的Copy-Paste设置非常相似。除了标准的训练设置外，还使用一些方法来处理LVIS上的类别不平衡问题。一种常见的方法是来自[21]的重复因子采样（RFS），其中t=0.001。这种方法旨在通过对包含较少频繁出现的对象类别的图像进行过采样，以帮助解决LVIS上的类别不平衡问题。对于LVIS上的单阶段训练，我们按照COCO上的相同训练参数进行训练，使用256批大小进行180k步。如[21]建议的，我们将每个图像的检测数增加到300，并将得分阈值降低到0。表8显示了将Copy-Paste应用于具有640×640输入尺寸的EfficientNet-B7 FPN的强单阶段LVIS基准的结果。我们观察到，Copy-Paste数据增强在AP、APc和APf上优于RFS，但在APr（罕见类别的AP）上表现不佳。最佳的整体结果来自结合RFS和Copy-Paste数据增强，获得了+2.4 AP和+8.7 APr的提升。
+
+**Copy-Paste improves two-stage LVIS training. Copy-Paste改进了两阶段LVIS训练**
+两阶段训练被广泛采用来解决数据不平衡问题，并在LVIS上获得良好的性能[37, 46, 55]。我们的研究目标是研究在这种两阶段设置中Copy-Paste的有效性。我们的两阶段训练如下：首先，我们使用标准训练技术（即与我们的单阶段训练相同）训练目标检测器，然后我们使用Class-Balanced Loss [8]对第一阶段训练的模型进行微调。一个类别的权重计算公式为(1-β)/(1-β^n)，其中n是该类别的实例数，β=0.999。
+
+在第二阶段的微调过程中，我们使用3倍的训练周期，并且仅使用分类损失更新Mask R-CNN中的最终分类层。从表9中的遮罩AP结果可以看出，使用Copy-Paste训练的模型学习到了更好的低样本类别特征（在APr上提高了2.3，APc上提高了2.6）。有趣的是，我们发现在两阶段训练中，RFS虽然在单阶段训练中非常有用并且与Copy-Paste具有叠加效果，但却对性能产生了负面影响。对于这一发现可能的解释是，使用RFS学习到的特征比使用原始LVIS数据集学习到的特征要差。我们将在未来的工作中对RFS和数据增强之间的权衡进行更详细的研究。
+
+**Comparison with the state-of-the-art. 和SOTA进行对比**
+此外，我们在表7中将我们的两阶段模型与LVIS6的最新方法进行了比较。令人惊讶的是，我们最小的模型ResNet-50 FPN在性能上优于使用ResNeXt-101-32×8d骨干网络的强基线模型cRT [33]。
+使用Copy-Paste训练的EfficientNet-B7 NAS-FPN模型（不包括Cascade 7）在没有测试时间增强的情况下实现了与LVIS挑战2020获胜者相当的总体Mask AP和Box AP性能。此外，它在罕见类别的Mask APr达到了32.1，超过LVIS挑战2020获胜作品的+3.6 Mask APr。
 
 <a id="5.结论Conclusion"></a>
 ## 5.结论 Conclusion
