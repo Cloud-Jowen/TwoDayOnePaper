@@ -13,8 +13,8 @@
 ## 网络总结
 参考博文链接：  
 参考视频链接：  
-源码链接：  https://github.com/jbwang1997/OBBDetection
-论文链接：  https://arxiv.org/pdf/2108.05699.pdf
+源码链接：  https://github.com/jbwang1997/OBBDetection  
+论文链接：  https://arxiv.org/pdf/2108.05699.pdf  
 
 <a id="0.摘要Abstract"></a>
 ## 0.摘要 Abstract
@@ -52,38 +52,51 @@
 ## 3.网络结构
 我们提出的物体检测方法被称为定向R-CNN，它由一个定向RPN和一个定向RCNN头部组成（见图2）。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/f688eeac-a296-44c9-ac83-06e717403c7f)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/f688eeac-a296-44c9-ac83-06e717403c7f)  
 图2：有向R-CNN的总体框架，这是一个建立在FPN上的两阶段检测器。第一阶段由有向RPN生成有向proposal，第二阶段是有向R-CNN头部用于分类proposal并细化它们的空间位置。为了清晰起见，我们没有展示有向RPN中的FPN以及分类分支。
 
 它是一个两阶段检测器，第一阶段以几乎零成本的方式生成高质量的定向proposal，第二阶段是定向RCNN头部用于proposal分类和回归。我们的FPN主干遵循[21]，产生五个级别的特征{P2，P3，P4，P5，P6}。为简单起见，我们没有显示定向RPN中的FPN架构以及分类分支。接下来，我们详细描述定向RPN和定向R-CNN头部。 
 
 
 
-<a id="3.1OrientedRPN"></a>
+<a id="3.1OrientedRPN"></a> 
 ### 3.1 Oriented RPN
-对于任何尺寸的输入图像，定向RPN输出一组稀疏的定向proposal。整个过程可以通过轻量级全卷积网络来建模。具体来说，它将FPN的五个特征级别{P2，P3，P4，P5，P6}作为输入，并为每个特征级别附加相同设计的头部（一个3×3卷积层和两个同级1×1卷积层）。我们在所有特征级别的每个空间位置上分配三个水平anchor，其中包括三个长宽比{1:2，1:1，2:1}的anchor。anchor在{P2，P3，P4，P5，P6}上具有像素面积为{32^{2},64^{2},128^{2},256^{2},512^{2}}。每个anchora用一个4维向量a=(ax,ay,aw,ah)表示，其中(ax,ay)是anchor的中心坐标，aw和ah表示anchor的宽度和高度。两个兄弟1×1卷积层中的一个是回归分支：输出相对于anchor的proposal偏移δ=(δx，δy，δw，δh，δα，δβ)。在特征图的每个位置，我们生成A个proposal（A是每个位置的anchor数量，并且在本文中等于3），因此回归分支具有6A个输出。通过解码回归输出，我们可以获得定向proposal。解码过程如下所述：
+对于任何尺寸的输入图像，定向RPN输出一组稀疏的定向proposal。整个过程可以通过轻量级全卷积网络来建模。具体来说，它将FPN的五个特征级别{P2，P3，P4，P5，P6}作为输入，并为每个特征级别附加相同设计的头部（一个3×3卷积层和两个同级1×1卷积层）。我们在所有特征级别的每个空间位置上分配三个水平anchor，其中包括三个长宽比{1:2，1:1，2:1}的anchor。anchor在{P2，P3，P4，P5，P6}上具有像素面积为{$` {32^{2},64^{2},128^{2},256^{2},512^{2}} `$}。每个anchor用一个4维向量$`a=(a_{x},a_{y},a_{w},a_{h})`$表示，其中$`(a_{x},a_{y})`$是anchor的中心坐标，$`a_{w}`$和$`a_{h}`$表示anchor的宽度和高度。两个同级1×1卷积层中的一个是回归分支：输出相对于anchor的proposal偏移$`{δ=(δ_{x}，δ_{y}，δ_{w}，δ_{h}，δ_{α}，δ_{β})}`$。在特征图的每个位置，我们生成$`A`$个proposal（A是每个位置的anchor数量，并且在本文中等于3），因此回归分支具有$`6A`$个输出。通过解码回归输出，我们可以获得定向proposal。解码过程如下所述（公式1）：
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/808cde38-16f5-445c-a17a-0e0943e96f9c)
+$`\left\{\begin{matrix}
+  &\bigtriangleup\alpha = \delta_{\alpha }\cdot w,\bigtriangleup\beta = \delta_{\beta}\cdot h \\
+  &w = a_{w}\cdot e^{\delta_{w}},h = a_{h}\cdot e^{\delta_{h}}&\\
+  &x = \delta_{x}\cdot a_{w} + a_{x},y = \delta_{y}\cdot a_{h} + a_{y} &
+\end{matrix}\right.`$
 
-其中，(x，y)是预测proposal的中心坐标，w和h是预测定向proposal外部矩形框的宽度和高度。∆α和∆β是相对于外部矩形框顶部和右侧中点的偏移量。最后，我们根据(x，y，w，h，∆α，∆β)产生定向proposal。
+其中，$`(x，y)`$是预测proposal的中心坐标，$`w`$和$`h`$是预测定向proposal外部矩形框的宽度和高度。$`\delta_{\alpha }`$和$`\delta_{\beta}`$是相对于外部矩形框顶部和右侧中点的偏移量。最后，我们根据$`(x，y，w，h，\delta_{\alpha }，\delta_{\beta})`$产生定向proposal。
 
-另一个兄弟卷积层估计每个定向proposal的物体得分。为了清晰地说明，我们在图2中省略了得分分支。定向RPN实际上是一种自然而直观的想法，但其关键在于定向物体的表示方式。在这种情况下，我们设计了一种新的简单的定向物体表示方案，称为中点偏移表示法。
+另一个同级卷积层估计每个定向proposal的物体得分。为了清晰地说明，我们在图2中省略了得分分支。定向RPN实际上是一种自然而直观的想法，但其关键在于定向物体的表示方式。在这种情况下，我们设计了一种新的简单的定向物体表示方案，称为中点偏移表示法。
 
-#### 3.1.1 Midpoint Offset Representation
-我们提出了一种新的定向物体表示方案，称为中点偏移表示法，如图3所示。黑点表示水平框每条边的中点，这是定向边界框O的外接矩形。橙色点表示定向边界框O的顶点。
+<a id="3.1.1中点偏移表示法"></a>
+#### 3.1.1 中点偏移表示法 Midpoint Offset Representation
+我们提出了一种新的定向物体表示方案，称为中点偏移表示法，如图3所示。黑点表示水平框每条边的中点，这是定向边界框O的外接矩形。橙色点表示定向边界框O的顶点。  
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/ee7d7d0c-5096-4091-91bc-7a4468eed733)    
+图3：中点偏移表示法的示意图。 (a) 中点偏移表示法的示意图。 (b) 中点偏移表示法的一个示例。
 
-具体而言，我们使用具有六个参数O = (x，y，w，h，∆α，∆β)的定向边界框O来表示通过公式（1）计算得到的物体。通过这六个参数，我们可以对于每个proposal获得四个顶点的坐标集合v = (v1，v2，v3，v4)。这里，∆α是v1相对于水平框顶部的中点(x，y - h/2)的偏移量。根据对称性，-∆α表示v3相对于底部中点(x，y + h/2)的偏移量。∆β表示v2相对于右侧中点(x + w/2，y)的偏移量，-∆β表示v4相对于左侧中点(x - w/2，y)的偏移量。因此，四个顶点的坐标可以表示如下：
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/1df87968-1355-4ef8-901f-3fb83afd50ec)
+具体而言，我们使用具有六个参数$`O = (x，y，w，h，\delta_{\alpha }，\delta_{\beta})`$的定向边界框O来表示通过公式（1）计算得到的物体。通过这六个参数，我们可以对于每个proposal获得四个顶点的坐标集合$`v = (v1，v2，v3，v4)`$。这里，$`\delta_{\alpha}`$是$`v1`$相对于水平框顶部的中点$`(x，y - h/2)`$的偏移量。根据对称性，$`-\delta_{\alpha}`$表示$`v3`$相对于底部中点 $`(x，y + h/2)`$的偏移量。$`\delta_{\beta}`$表示$`v2`$相对于右侧中点$`(x + w/2，y)`$的偏移量，$`-\delta_{\beta}`$表示$`v4`$相对于左侧中点$`(x - w/2，y)`$的偏移量。因此，四个顶点的坐标可以表示如下：  
+ $`\left\{\begin{matrix}
+ & v1 = (x,y-h/2) + (\bigtriangleup\alpha ,0 ) \\
+ & v2 = (x+w/2,y) + (0,\bigtriangleup\beta )& \\
+ & v3 = (x,y+h/2) + (-\bigtriangleup\alpha ,0)& \\
+ & v4 = (x-w/2,y) + (0,-\bigtriangleup\beta)& \\
+\end{matrix}\right.`$  
 
-通过这种表示方式，我们通过预测外部矩形的参数（x，y，w，h）并推断中点偏移的参数（∆α，∆β），对每个定向proposal进行回归。
+通过这种表示方式，我们通过预测外部矩形的参数$`（x，y，w，h）`$并推断中点偏移的参数$`\delta_{\alpha},\delta_{\beta}`$，对每个定向proposal进行回归。
 
-#### 3.1.2 Loss Function
-为了训练定向RPN，我们定义正样本和负样本如下。首先，给每个anchor分配一个二元标签p∗ ∈ {0, 1}。其中，0和1表示该anchor属于负样本或正样本。具体而言，我们将满足以下条件之一的anchor视为正样本：（i）与任何真实边界框的IoU重叠大于0.7；（ii）与真实边界框的IoU重叠最高且大于0.3。当anchor与真实边界框的IoU小于0.3时，将其标记为负样本。那些既不是正样本也不是负样本的anchor被视为无效样本，在训练过程中被忽略。值得注意的是，上述的真实边界框指的是定向边界框的外接矩形。
+<a id="3.1.2损失函数"></a>$``$
+#### 3.1.2 损失函数 Loss Function
+为了训练定向RPN，我们定义正样本和负样本如下。首先，给每个anchor分配一个二元标签$`p^{∗} ∈ {0, 1}`$。其中，0和1表示该anchor属于负样本或正样本。具体而言，我们将满足以下条件之一的anchor视为正样本：（i）与任何真实边界框的IoU重叠大于0.7；（ii）与真实边界框的IoU重叠最高且大于0.3。当anchor与真实边界框的IoU小于0.3时，将其标记为负样本。那些既不是正样本也不是负样本的anchor被视为无效样本，在训练过程中被忽略。值得注意的是，上述的真实边界框指的是定向边界框的外接矩形。
 
-接下来，我们定义损失函数L1如下：
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/371e1866-14b6-453d-9e52-5b0456aa8b22)
+接下来，我们定义损失函数L1如下：  
+$`L_{1} = \frac{1}{N}\sum_{i=1}^{N}F_{cls}(p_{i},{p_{i}^{*}}) + \frac{1}{N}{p_{i}^{*}}\sum_{i=1}^{N}F_{reg}(\delta_{i},{t_{i}^{*}})`$
 
-这里，i是anchor的索引，N（默认为N=256）是一个小批量样本中的总样本数。p∗i是第i个anchor的实际标签。pi是定向RPN分类分支的输出，表示proposal属于前景的概率。t∗i是相对于第i个anchor的真实边界框的监督偏移量，是一个参数化的6维向量t∗i = (t∗x, t∗y, t∗w, t∗h, t∗α, t∗β)，来自于定向RPN回归分支的输出，表示相对于第i个anchor的预测proposal的偏移量。Fcls是交叉熵损失函数。Freg是平滑L1损失函数。对于框回归（参见图4），我们采用仿射变换，其公式如下：
+这里，i是anchor的索引，N（默认为N=256）是一个小批量样本中的总样本数。$`{p_{i}^{*}}`$是第i个anchor的实际标签。$`pi`$是定向RPN分类分支的输出，表示proposal属于前景的概率。$`{t_{i}^{*}}`$是相对于第i个anchor的真实边界框的监督偏移量，是一个参数化的6维向量$`{t_{i}^{*}} = ({t_{x}^{*}},{t_{y}^{*}},{t_{w}^{*}},{t_{h}^{*}},{t_{\alpha}^{*}},{t_{\beta}^{*}}`$，来自于定向RPN回归分支的输出，表示相对于第i个anchor的预测proposal的偏移量。Fcls是交叉熵损失函数。Freg是平滑L1损失函数。对于框回归（参见图4），我们采用仿射变换，其公式如下：
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/f0fb56c3-68e8-4303-a473-899c511bf2d5)  
 
 其中，(xg, yg)、wg和hg分别是外接矩形的中心坐标、宽度和高度。∆αg和∆βg是相对于上边和左边中点的偏移量，表示顶部和右侧顶点的位置偏移。
