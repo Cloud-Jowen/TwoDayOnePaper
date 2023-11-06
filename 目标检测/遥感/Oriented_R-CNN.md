@@ -42,9 +42,9 @@
 具体而言，在定向R-CNN的第一阶段，我们提出了一个概念上简单的定向RPN（见图1(c)）。我们的定向RPN是一种轻量级的全卷积网络，其参数数量比旋转RPN和RoI Transformer+要少得多，从而降低了过拟合的风险。我们通过将RPN回归分支的输出参数数量从四个改变为六个来实现这一点。然而，没有免费的午餐。定向RPN的设计受益于我们提出的定向物体表示方案，称为中点偏移表示。对于图像中的任意定向物体，我们利用六个参数来表示它们。中点偏移表示继承了水平回归机制，并为预测定向proposal提供了有界约束。定向R-CNN的第二阶段是定向R-CNN检测头：通过旋转的RoI对齐提取每个定向proposal的特征，并进行分类和回归。
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/d5808687-93cc-48c1-b3fb-59a555882299)  
-图1：不同生成有向proposal方案的比较。（a）旋转RPN密集地放置具有不同尺度、比例和角度的旋转anchor。（b）RoI Transformer+从水平RoI中学习有向proposal。它涉及到RPN、RoI对齐和回归。（c）我们提出的有向RPN以几乎零成本的方式生成高质量的proposal。有向RPN的参数数量约为RoI Transformer+的1/3000和旋转RPN的1/15。
+(图1：不同生成有向proposal方案的比较。（a）旋转RPN密集地放置具有不同尺度、比例和角度的旋转anchor。（b）RoI Transformer+从水平RoI中学习有向proposal。它涉及到RPN、RoI对齐和回归。（c）我们提出的有向RPN以几乎零成本的方式生成高质量的proposal。有向RPN的参数数量约为RoI Transformer+的1/3000和旋转RPN的1/15。)
 
-在没有华而不实的装饰下，我们在两个流行的定向物体检测基准数据集DOTA和HRSC2016上评估了我们的定向R-CNN方法。我们使用ResNet-50-FPN网络，在所有现有最先进的检测器中，达到了最高的准确性，DOTA数据集上达到了75.87%的mAP，HRSC2016数据集上达到了96.50%的mAP，同时在单个RTX 2080Ti上以1024×1024的图像尺寸运行时的帧率为15.1 FPS。因此，定向R-CNN在准确性和效率两方面都是一个实用的物体检测框架。我们希望我们的方法能够启发对定向物体检测器和定向物体回归方案设计的重新思考，并作为定向物体检测的稳定基准。关于未来的研究，我们的代码可在https://github.com/jbwang1997/OBBDetection上获取。
+在没有华而不实的装饰下，我们在两个流行的定向物体检测基准数据集DOTA和HRSC2016上评估了我们的定向R-CNN方法。我们使用ResNet-50-FPN网络，在所有现有最先进的检测器中，达到了最高的准确性，DOTA数据集上达到了75.87%的mAP，HRSC2016数据集上达到了96.50%的mAP，同时在单个RTX 2080Ti上以1024×1024的图像尺寸运行时的帧率为15.1 FPS。因此，定向R-CNN在准确性和效率两方面都是一个实用的物体检测框架。我们希望我们的方法能够启发对定向物体检测器和定向物体回归方案设计的重新思考，并作为定向物体检测的稳定基准。关于未来的研究，我们的代码可在 https://github.com/jbwang1997/OBBDetection 上获取。
 
 <a id="2.相关工作Relatedwork"></a>
 ## 2.相关工作 Related work
@@ -63,11 +63,9 @@
 我们提出的物体检测方法被称为定向R-CNN，它由一个定向RPN和一个定向RCNN头部组成（见图2）。
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/f688eeac-a296-44c9-ac83-06e717403c7f)  
-图2：有向R-CNN的总体框架，这是一个建立在FPN上的两阶段检测器。第一阶段由有向RPN生成有向proposal，第二阶段是有向R-CNN头部用于分类proposal并细化它们的空间位置。为了清晰起见，我们没有展示有向RPN中的FPN以及分类分支。
+(图2：有向R-CNN的总体框架，这是一个建立在FPN上的两阶段检测器。第一阶段由有向RPN生成有向proposal，第二阶段是有向R-CNN头部用于分类proposal并细化它们的空间位置。为了清晰起见，我们没有展示有向RPN中的FPN以及分类分支。)
 
 它是一个两阶段检测器，第一阶段以几乎零成本的方式生成高质量的定向proposal，第二阶段是定向RCNN头部用于proposal分类和回归。我们的FPN主干遵循[21]，产生五个级别的特征{P2，P3，P4，P5，P6}。为简单起见，我们没有显示定向RPN中的FPN架构以及分类分支。接下来，我们详细描述定向RPN和定向R-CNN头部。 
-
-
 
 <a id="3.1OrientedRPN"></a> 
 ### 3.1 Oriented RPN
@@ -124,6 +122,9 @@ L_{1} = \frac{1}{N}\sum_{i=1}^n F_{cls}(p_{i},{p_{i}^{*}}) + \frac{1}{N}{p_{i}^{
 \end{matrix}\right.
 ```
 
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/9d9cd0af-9fd4-4557-86b7-1b10b91b8b0e)  
+(图4：框回归参数化的示意图。黑色点是顶边和右边的中点，橙色点是有向边界框的顶点。(a) 锚点。(b) 实际框。(c) 预测框。)
+
 其中，$`(x_g, y_g)`$、$`wg`$和$`hg`$分别是外接矩形的中心坐标、宽度和高度。$`\bigtriangleup\alpha_g`$和$`\bigtriangleup\beta_g`$是相对于上边和左边中点的偏移量，表示顶部和右侧顶点的位置偏移。
 
 <a id="3.2OrientedR-CNNHead"></a>
@@ -135,10 +136,15 @@ L_{1} = \frac{1}{N}\sum_{i=1}^n F_{cls}(p_{i},{p_{i}^{*}}) + \frac{1}{N}{p_{i}^{
 旋转的RoIAlign是一种从每个定向proposal中提取旋转不变特征的操作。现在，我们根据图5来描述旋转的RoIAlign的过程。由定向RPN生成的定向proposal通常是一个平行四边形（图5中的蓝色框），用参数$`v = (v1，v2，v3，v4)`$表示，其中$`v1，v2，v3`$和$`v4`$是其顶点坐标。为了方便计算，我们需要将每个平行四边形调整为具有方向的矩形。具体来说，我们通过将平行四边形的较短对角线（图5中从v2到v4的线段）延长至与较长对角线具有相同的长度来实现这一点。经过这个简单的操作，我们从平行四边形中得到了定向矩形$`（x，y，w，h，θ）`$（图5中的红色框），其中θ∈[−π/2，π/2]由水平轴和矩形的较长边之间的交角定义。
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/e8600762-a3be-409d-b055-0b31bc4ea4be)
-图5：旋转RoIAlign过程的示意图。蓝色框是由有向RPN生成的平行四边形proposal，最左边的红色框是其对应的用于投影和旋转RoIAlign的矩形proposal。
+(图5：旋转RoIAlign过程的示意图。蓝色框是由有向RPN生成的平行四边形proposal，最左边的红色框是其对应的用于投影和旋转RoIAlign的矩形proposal。)
 
-接下来，我们将定向矩形$`（x，y，w，h，θ）`$投影到步长为$`s`$的特征图$`F`$上，以通过以下操作得到一个旋转的RoI，该旋转的RoI由$`(xr，yr，wr，hr，θ)`$定义。
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/0c3b80e8-d73c-433d-83e3-11707fe1f303)
+接下来，我们将定向矩形$`（x，y，w，h，θ）`$投影到步长为$`s`$的特征图$`F`$上，以通过以下操作得到一个旋转的RoI，该旋转的RoI由$`(x_r，y_r，w_r，h_r，θ)`$定义。
+```math
+\left\{\begin{matrix}
+  & w_r = w/s,h_r=h/s\\
+  & x_r = \left \lfloor x/s \right \rfloor ,  y_r = \left \lfloor y/s \right \rfloor
+\end{matrix}\right.
+```
 
 然后，每个旋转的RoI被分成$`m×m`$个网格（m默认为7），以获得尺寸固定的特征图$`F'`$，其维度为m×m×C。对于第c个通道$`（1 ≤ c < C）`$中的索引为$`（i，j）`$ $`（0 ≤ i，j ≤ m-1）`$的每个网格，其值计算如下：
 ```math
@@ -175,25 +181,25 @@ HRSC2016是另一个广泛使用的任意定向船只检测数据集。它包含
 我们根据召回率评估了有向RPN的性能。有向RPN的结果是在DOTA验证集上报告的，使用ResNet-50-FPN作为主干网络。为了简化过程，我们仅基于从原始图像裁剪的小块计算召回率，而不进行合并。与真实边界框之间的IoU阈值设置为0.5。我们分别从每个图像小块中选择前300、前1000和前2000个候选框来报告它们的召回率，记为R300、R1000和R2000。结果如表1所示。可以看出，当使用2000个候选框时，我们的有向RPN可以达到92.80%的召回率。当候选框的数量从2000个减少到1000个时，召回率仅略微下降（0.6%），但当使用300个候选框时，召回率急剧下降。因此，为了在推理速度和检测准确性之间取得平衡，我们选择1000个候选框作为有向R-CNN头部在测试时的输入，适用于两个数据集。在图6中，我们展示了有向RPN在DOTA数据集上生成的一些候选框示例。每个图像显示了前200个候选框。正如所示，我们提出的有向RPN可以很好地定位对象，无论它们的大小、宽高比、方向和密度如何。
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/e69950cc-d2d0-481b-890a-f8a608b3756e)  
-图6：有向RPN在DOTA数据集上生成的proposal。每个图像显示前200个proposal。
+(图6：有向RPN在DOTA数据集上生成的proposal。每个图像显示前200个proposal。)
 
 <a id="4.4和SOTA方法相比ComparisonwithState-of-the-Arts"></a>
 ### 4.4  和SOTA方法相比 Comparison with State-of-the-Arts
 我们将我们的有向R-CNN方法与19种有向物体检测方法在DOTA数据集上进行比较，以及在HRSC2016数据集上与10种方法进行比较。表2和表3分别报告了DOTA和HRSC2016数据集上的详细比较结果。主干网如下：R-50代表ResNet-50，R-101表示ResNet-101，H-104是104层的hourglass网络[38]，而DLA-34则表示34层的深度层聚合网络[46]。
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/9b161cd8-411b-4d02-8c33-8c24523c874f)  
-表2：在DOTA数据集上与最先进方法的比较。†表示来自AerialDetection的结果（以下相同）。‡表示多尺度训练和测试。
+(表2：在DOTA数据集上与最先进方法的比较。†表示来自AerialDetection的结果（以下相同）。‡表示多尺度训练和测试。)
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/637cb194-88f1-4bdd-bf17-74434ae7e5ff)  
-表3：在HRSC2016数据集上的比较结果。
+(表3：在HRSC2016数据集上的比较结果。)
 
 在DOTA数据集上，我们的方法超过了所有比较方法。使用R-50-FPN和R-101-FPN作为主干网，我们的方法分别获得了75.87%和76.28%的mAP。令人惊讶的是，即使使用R-50-FPN主干网，我们的方法也胜过所有使用R-101-FPN主干网的比较方法。此外，通过多尺度训练和测试策略，我们的方法使用R-50-FPN主干网达到了80.87%的mAP，与目前最先进的方法相比非常具有竞争力。图7展示了DOTA数据集上的一些结果。
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/b1932690-b7e0-4aa3-a064-526e651d347e)  
-Figure 7：使用带有R-50-FPN主干的有向R-CNN在DOTA数据集上的检测结果示例。在可视化这些结果时，置信度阈值设置为0.3。一种颜色代表一种物体类别。
+(图7：使用带有R-50-FPN主干的有向R-CNN在DOTA数据集上的检测结果示例。在可视化这些结果时，置信度阈值设置为0.3。一种颜色代表一种物体类别。)
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/3fa9031e-3676-4ce3-81ff-8a881ce94d6a)  
-Figure 8：使用带有R-50-FPN主干的有向R-CNN在HRSC2016数据集上的检测结果示例。显示得分高于0.3的有向边界框。 
+(图8：使用带有R-50-FPN主干的有向R-CNN在HRSC2016数据集上的检测结果示例。显示得分高于0.3的有向边界框。 )
 
 对于HRSC2016数据集，我们列出了不同方法在PASCAL VOC 2007和VOC 2012指标下的mAP值。使用R-50-FPN和R-101-FPN，我们的有向R-CNN都获得了最佳精度。一些可视化结果展示在图8中。
 
