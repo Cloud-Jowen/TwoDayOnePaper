@@ -122,10 +122,10 @@ L_{1} = \frac{1}{N}\sum_{i=1}^n F_{cls}(p_{i},{p_{i}^{*}}) + \frac{1}{N}{p_{i}^{
 \end{matrix}\right.
 ```
 
+其中，$`(x_g, y_g)`$、$`wg`$和$`hg`$分别是外接矩形的中心坐标、宽度和高度。$`\bigtriangleup\alpha_g`$和$`\bigtriangleup\beta_g`$是相对于上边和左边中点的偏移量，表示顶部和右侧顶点的位置偏移。
+
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/9d9cd0af-9fd4-4557-86b7-1b10b91b8b0e)  
 (图4：框回归参数化的示意图。黑色点是顶边和右边的中点，橙色点是有向边界框的顶点。(a) 锚点。(b) 实际框。(c) 预测框。)
-
-其中，$`(x_g, y_g)`$、$`wg`$和$`hg`$分别是外接矩形的中心坐标、宽度和高度。$`\bigtriangleup\alpha_g`$和$`\bigtriangleup\beta_g`$是相对于上边和左边中点的偏移量，表示顶部和右侧顶点的位置偏移。
 
 <a id="3.2OrientedR-CNNHead"></a>
 ### 3.2 Oriented R-CNN Head 
