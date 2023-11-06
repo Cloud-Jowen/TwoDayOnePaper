@@ -6,6 +6,13 @@
 [**2.相关工作 Related work**](#2.相关工作Relatedwork)  
 [**3.方法 Method**](#3.方法Method)  
 [**4.实验 Experiments**](#4.实验Experiments)  
+&emsp;[**4.1 实验设置**](#4.1实验设置)  
+&emsp;[**4.2 Copy-Paste有鲁棒性**](#4.2Copy-Paste有鲁棒性)  
+&emsp;[**4.3 Copy-Paste使得训练数据更高效**](#4.3Copy-Paste使得训练数据更高效)  
+&emsp;[**4.4 Copy-Paste和自训练是可以相互叠加的**](#4.4Copy-Paste和自训练是可以相互叠加的)  
+&emsp;[**4.5 Copy-Paste达到了COCO的新SOTA**](#4.5Copy-Paste达到了COCO的新SOTA)  
+&emsp;[**4.6 Copy-Paste在PASCAL检测和分割的任务上产生了更好的效果**](#4.6Copy-Paste在PASCAL检测和分割的任务上产生了更好的效果)  
+&emsp;[**4.7 Copy-Paste为LVIS提供了巨大的增益**](#4.7Copy-Paste为LVIS提供了巨大的增益)  
 [**5.结论 Conclusion**](#5.结论Conclusion)  
 
 
@@ -45,23 +52,23 @@ Copy-Paste增强策略容易集成到任何实例分割代码库中，可以有�
 
 <a id="2.相关工作Relatedwork"></a>
 ## 2.相关工作 Related work
-**Data Augmentations 数据增强**  
+**数据增强 Data Augmentations**  
 与在骨干网络架构[35, 51, 53, 27, 56]和检测/分割框架[19, 18, 47, 38, 26, 39]方面的工作量相比，计算机视觉领域对数据增强[50]相对关注较少。数据增强，诸如随机裁剪[36, 35, 51, 53]、颜色抖动[53]、自动/随机增强[6, 7]在图像分类[27, 56]、自监督学习[28, 24, 5]和半监督学习[64]以及ImageNet [48]基准测试中发挥了重要作用。这些增强方法更具有通用性，主要用于对数据变换进行编码，适用于图像分类[48]。  
 
-**Mixing Image Augmentations  混合图像增强**  
+**混合图像增强 Mixing Image Augmentations**  
 混合图像增强。与对数据变换进行编码的增强方法相比，存在一类增强方法，它通过适当改变真实标签将不同图像中的信息混合在一起。一个经典的例子是mixup数据增强方法[66]，它通过输入像素和输出标签的凸组合创建新的数据点。还有一些mixup的改进方法，如CutMix[65]，它不是混合所有像素，而是粘贴图像的矩形裁剪。还有将mixup和CutMix应用于目标检测[69]的案例。在YOLOv4中使用的Mosaic数据增强方法[1]与CutMix类似，它创建了一个由多个单独图像及其真实标签组成的矩形网格的复合图像。虽然mixup、CutMix和Mosaic在合并多个图像或裁剪版本以创建新的训练数据方面很有用，但它们仍然没有考虑到对象，并且并非专门设计用于实例分割任务。  
 
-**Copy-Paste Augmentation Copy-Paste数据增强**  
+**Copy-Paste数据增强 Copy-Paste Augmentation**  
 一种将多个图像的信息以对象感知的方式进行组合的简单方法是将一个图像中的对象实例复制并粘贴到另一个图像中。Copy-Paste类似于mixup和CutMix，但只复制与对象对应的精确像素，而不是对象边界框中的所有像素。我们的工作与Contextual Copy-Paste[12]和InstaBoost[15]相比的一个关键区别是，我们不需要建模周围的视觉环境来放置复制的对象实例。一个简单的随机放置策略效果很好，并且在强基线模型上取得了显著的改进。Instaboost[15]与之前的Copy-Paste[12]工作不同之处在于，它不是从其他图像中粘贴实例，而是对图像上已经存在的实例进行扰动。Cut-Paste-and-Learn[13]提出了提取对象实例、将它们混合并粘贴到不同背景上，并在增强图像的基础上进行训练的方法。我们的工作使用了相同的方法，但有一些不同之处：  
 (1)我们不使用几何变换(例如旋转)，并发现对粘贴的实例进行高斯模糊并没有好处；  
 (2)我们研究了在将一个图像中包含的对象粘贴到另一个已经存在实例的图像中的情况下的Copy-Paste，而[13]则研究了在具有一组对象实例和背景场景的情况下进行Copy-Paste以提高性能；  
 (3)我们研究了在半监督学习环境中使用Copy-Paste与自训练相结合的有效性。  
 (4)我们在广泛使用的COCO和LVIS数据集上对Copy-Paste进行了基准测试和深入研究，而Cut-Paste-and-Learn则使用GMU数据集[16]。我们论文的一个重要贡献是展示了在COCO和LVIS上改进最先进的实例分割模型中使用Copy-Paste的效果。    
 
-**Instance Segmentation 实例分割**  
+**实例分割 Instance Segmentation**  
 实例分割[22,23]是一个具有挑战性的计算机视觉问题，旨在同时检测对象实例并分割每个实例对应的像素。Mask-RCNN[26]是一种广泛使用的框架，大多数最先进的方法[67,11,43]采用该方法。COCO数据集是衡量进展的广泛使用的基准。我们报告了在COCO基准测试中的最新结果，超越了SpineNet [11] 2.8 AP和DetectoRS [43] 0.6 AP。Copy and paste方法也被用于弱监督实例分割。Remez等人[45]引入了一种对抗性方法，其中使用生成器网络预测给定边界框内对象的分割掩码。给定生成的掩码，将对象与另一背景混合，然后使用鉴别器网络确保生成的掩码/图像看起来逼真。与这项工作不同，我们使用Copy-Paste作为增强方法。  
 
-**Long-Tail Visual Recognition 长尾视觉识别**  
+**长尾视觉识别 Long-Tail Visual Recognition**  
 最近，计算机视觉界开始关注自然图像中存在的对象类别的长尾性质[59, 21]，其中许多不同的对象类别只有很少的标注图像。在训练深度网络时，解决长尾数据的现代方法主要可以分为两组：数据重新采样[41, 21, 62]和损失重加权[30, 8, 3, 54, 37, 46]。其他更复杂的学习方法（例如元学习[63, 29, 32]、因果推断[58]、贝叶斯方法[34]等）也被用来处理长尾数据。最近的研究[9, 3, 33, 71, 37]指出了两阶段训练策略的有效性，通过将特征学习和重新平衡阶段分开，对于特征学习而言，端到端训练与重新平衡策略可能会有害。关于目标检测中数据不平衡的更全面的总结可以在Oksuz等人的工作[42]中找到。我们的工作证明了简单的Copy-Paste数据增强在LVIS基准测试中对单阶段和两阶段训练都能带来显著的收益，特别是对于罕见的对象类别。
 
 
@@ -74,17 +81,17 @@ Copy-Paste增强策略容易集成到任何实例分割代码库中，可以有�
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/4b4fef8f-3450-425e-b95d-71560c87f4d0)  
 图2。我们使用简单的复制和粘贴方法为训练实例分割模型创建新图像。我们在两个随机训练图像上应用随机尺度抖动，然后从一个图像中随机选择一部分实例并将它们粘贴到另一个图像上。
 
-**Blending Pasted Objects 混合粘贴的对象**  
+**混合粘贴的对象 Blending Pasted Objects**  
 为了将新对象合成到图像中，我们使用gt注释计算粘贴对象的二进制掩码（α），并将新图像计算为 I1 × α + I2 × (1 - α)，其中I1是粘贴的图像，I2是主要图像。为了平滑粘贴对象的边缘，我们对α应用了高斯滤波，类似于[13]中的“混合”方法。但与[13]不同的是，我们还发现，仅仅进行简单的合成而没有任何混合也具有类似的性能。
 
-**Large Scale Jittering 大尺度抖动**  
+**大尺度抖动 Large Scale Jittering**  
 在整篇文章中，我们与Copy-Paste一起使用了两种不同类型的增强方法：标准尺度抖动（SSJ）和大尺度抖动（LSJ）。这些方法会随机调整和裁剪图像的大小。请参见图3，以了解这两种方法的图形说明。在我们的实验中，我们观察到大尺度抖动比大多数之前的作品中使用的标准尺度抖动产生了显着的性能改进。
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/04a67148-be0d-4794-9be0-7bdba4791d6a)
 
 图3。在本文中使用的两种尺度抖动增强方法的符号和可视化。标准尺度抖动（SSJ）将图像的大小调整为0.8到1.25倍的原始图像大小，并进行裁剪。大尺度抖动（LSJ）的大小调整范围从原始图像大小的0.1到2.0倍不等。如果图像比其原始大小要小，则会用灰色像素值填充这些图像。这两种尺度抖动方法也使用水平翻转。
 
-**Self-training Copy-Paste 自监督Copy-Paste**  
+**自监督Copy-Paste Self-training Copy-Paste**  
 除了在有监督数据上研究CopyPaste之外，我们还尝试将其作为一种整合额外无标签图像的方式进行实验。我们的自训练Copy-Paste过程如下：
 （1）使用带有Copy-Paste增强的有标签数据训练一个有监督模型  
 （2）在无标签数据上生成伪标签  
@@ -92,58 +99,64 @@ Copy-Paste增强策略容易集成到任何实例分割代码库中，可以有�
 
 <a id="4.实验Experiments"></a>
 ## 4.实验 Experiments
-### 4.1  Experimental Settings 实验设置
-**Architecture 结构**  
+<a id="4.1实验设置"></a>
+### 4.1 实验设置 Experimental Settings
+**结构 Architecture**  
 我们使用Mask R-CNN [26]作为主干架构，其中EfficientNet [56]或ResNet [27]用作主干网络。我们还采用了特征金字塔网络[38]进行多尺度特征融合。我们使用P2到P6的金字塔级别，每个像素有8×2^l大小的锚点以及3个锚点。我们最强大的模型使用Cascade R-CNN [2]，以EfficientNet-B7作为主干网络，并使用NAS-FPN [17]作为特征金字塔，其金字塔级别从P3到P7。锚点大小为4×2^l，每个像素有9个锚点。我们NAS-FPN模型使用5个重复，将卷积层替换为ResNet瓶颈块[27]。
 
-**Training Parameters 训练参数**  
+**训练参数 Training Parameters**  
 所有模型都使用批量同步归一化 [31, 20] 进行训练，批量大小为256，权重衰减为4e-5。我们使用学习率为0.32和步进学习率衰减 [25]。在训练开始时，学习率在前1000个步骤内从0.0032线性增加到0.32。我们在总训练步骤的0.9、0.95和0.975分位数处衰减学习率。我们将最大模型的主干网络从经过自训练的ImageNet检查点初始化，以加快训练速度 [64]。除非另有说明，否则所有其他结果均来自使用随机初始化的模型。此外，除非另有说明，我们在训练模型时使用大规模扰动增强。在我们的实验中，对于所有不同的增强和数据集大小，我们允许每个模型训练直到收敛（即验证集性能不再提高）。例如，使用大规模扰动和Copy-Paste增强从头开始训练一个模型需要576个epochs，而仅使用标准尺度扰动训练需要96个epochs。在自训练实验中，我们将批量大小增加到512，而保持其他超参数不变，但对于最大模型，由于内存限制，我们保持批量大小为256。
 
-**Dataset 数据集**
+**数据集 Dataset**
 我们使用COCO数据集 [40]，其中包含118k个训练图像。对于自训练实验，我们使用未标记的COCO数据集（120k张图像）和Objects365数据集 [49]（610k张图像）作为未标记的图像。对于迁移学习实验，我们首先在COCO数据集上预训练我们的模型，然后在Pascal VOC数据集 [14]上进行微调。对于语义分割，我们在PASCAL VOC 2012语义分割数据集的train集（1.5k张图像）上训练模型。对于检测，我们在PASCAL VOC 2007和PASCAL VOC 2012的trainval集上进行训练。我们还在LVIS v1.0（100k个训练图像）上对Copy-Paste进行基准测试，并在LVIS v1.0验证集（20k张图像）上报告结果。LVIS具有1203个类别，以模拟自然图像中类别的长尾分布。
 
-### 4.2. Copy-Paste is robust to training configurations Copy-Paste有鲁棒性
+<a id="4.2Copy-Paste有鲁棒性"></a>
+### 4.2 Copy-Paste有鲁棒性 Copy-Paste is robust to training configurations 
 在本节中，我们展示Copy-Paste是一种强大的数据增强方法，它在多种训练迭代、模型和训练超参数下都很稳健。  
-**Robustness to backbone initialization 对主干网络初始化的稳健性**  
+**对主干网络初始化的稳健性 Robustness to backbone initialization**  
 常见的Mask R-CNN训练实践是使用ImageNet预训练检查点来初始化主干网络。然而，何凯明等人[25]和Zoph等人[73]表明，从随机初始化开始训练的模型在更长时间的训练下具有类似或更好的性能。使用强数据增强（即RandAugment [7]）从ImageNet预训练训练模型的表现被证明会在COCO上降低1个AP分数。图4（左）展示了CopyPaste在两种设置中都具有加法效应，并且使用Copy-Paste增强和随机初始化可以获得最佳结果。
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/3c902384-2fe4-4f40-9acb-0f6dcfa9022b)  
 图4. Copy-Paste提供的收益对训练配置具有稳健性。我们使用1024×1024图像大小训练Mask R-CNN（ResNet-50 FPN）在不同数量的时期内。左图：使用ImageNet预训练初始化主干网络的Copy-Paste和未使用初始化的Copy-Paste。右图：标准和大尺度抖动的Copy-Paste。在所有配置中，使用Copy-Paste进行训练都是有帮助的。
 
-**Robustness to training schedules 对训练计划的稳健性**  
+**对训练计划的稳健性 Robustness to training schedules**  
 文献中Mask R-CNN的典型训练计划只有24（2×）或36个时期（3×）[25, 26, 15]。然而，最近的最新结果表明，在COCO上训练目标检测模型更长时间的训练是有帮助的[73, 57, 11]。图4显示，我们在典型的2×或3×训练计划中从Copy-Paste获得了收益，并且随着训练时期的增加，收益增加。这表明Copy-Paste是一种非常实用的数据增强方法，因为我们不需要更长的训练计划来看到其好处。
 
-**Copy-Paste is additive to large scale jittering augmentation 复制-粘贴是对大规模尺度抖动增强的一种补充**  
+**Copy-Paste是对大规模尺度抖动增强的一种补充 Copy-Paste is additive to large scale jittering augmentation**  
 随机尺度抖动是一种在训练计算机视觉模型中广泛使用的强大数据增强方法。在文献中，标准的尺度抖动范围是从0.8到1.25 [39, 25, 6, 15]。然而，通过使用范围为0.1到2.0的更大尺度抖动来增加数据，并进行更长时间的训练，可以显著提高性能（参见图4的右侧图）。图5展示了复制-粘贴对标准和大尺度抖动增强的叠加效果，并且在标准尺度抖动的基础上获得了更高的提升。另一方面，正如图5所示，当mixup [66, 69]数据增强与大尺度抖动一起使用时，并不能带来帮助。
 
-**Copy-Paste works across backbone architectures and image sizes 复制-粘贴方法适用于各种主干架构和图像尺寸**  
+**Copy-Paste方法适用于各种主干架构和图像尺寸 Copy-Paste works across backbone architectures and image sizes 复制-粘贴方法适用于各种主干架构和图像尺寸**  
 最后，我们证明了复制-粘贴对使用ResNet [27]标准主干架构以及较新的EfficientNet [56]架构的模型都有帮助。我们在图像尺寸为640×640、1024×1024或1280×1280的情况下训练这些模型。表1显示，与使用大尺度抖动训练的强基准模型相比，我们在所有模型上都取得了显著的改进。在具有不同主干架构和图像尺寸的7个模型中，复制-粘贴平均提高了1.3个边界框AP和0.8个掩码AP的性能。
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/8b1802c6-12b2-4cf0-bb1d-b3c642f621a8)
 表1. 复制-粘贴在各种不同的模型架构、模型大小和图像分辨率上都表现良好。请参见附录中的表13，了解不同物体尺寸的基准结果。
 
-### 4.3. Copy-Paste helps data-efficiency Copy-Paste使得训练数据更高效
+<a id="4.3Copy-Paste使得训练数据更高效"></a>
+### 4.3 Copy-Paste使得训练数据更高效 Copy-Paste helps data-efficiency 
 在本节中，我们展示了复制-粘贴在各种数据集大小上的帮助，以及对数据效率的提升。图5显示，复制-粘贴增强方法在COCO的各个部分都是有帮助的。在低数据量情况下（COCO的10%）复制-粘贴尤其有帮助，与标准尺度抖动（SSJ）相比，边界框平均准确率（box AP）提高了6.9个百分点，与大尺度抖动（LSJ）相比提高了4.8个百分点。另一方面，mixup方法只在低数据量情况下有帮助。复制-粘贴还显著提高了数据效率：使用复制-粘贴和大尺度抖动（LSJ）在COCO的75%上进行训练的模型，与仅使用大尺度抖动（LSJ）在COCO的100%上进行训练的模型具有相似的性能。  
 
-### 4.4. Copy-Paste and self-training are additive 复制-粘贴和自训练是可以相互叠加的
+<a id="4.4Copy-Paste和自训练是可以相互叠加的"></a>
+### 4.4 Copy-Paste和自训练是可以相互叠加的 Copy-Paste and self-training are additive 
 在本节中，我们证明了类似于[64, 73]的标准自训练方法和复制-粘贴可以结合使用来利用无标签数据。复制-粘贴和自训练分别对基准模型的边界框平均准确率（box AP）提高了1.5个百分点，基准模型的box AP为48.5（见表2）。
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/55794a92-6773-4cb3-a7b6-42485636e2be)
 
 为了将自训练和复制-粘贴结合起来，我们首先使用使用复制-粘贴进行训练的有监督教师模型，在无标签数据上生成伪标签。然后，我们将COCO的真实对象粘贴到伪标记图像和COCO图像中。最后，我们使用所有这些图像对学生模型进行训练。通过这个设置，我们实现了51.4的box AP，相比基准模型提高了2.9个AP。
 
-**Data to Paste on 用来粘贴的数据**  
+**用来粘贴的数据 Data to Paste on**  
 在我们的自训练设置中，批次的一半来自有监督的COCO数据（12万张图像），另一半来自伪标记数据（来自无标签COCO的11万张图像和来自Objects365的61万张图像）。表3展示了当我们将COCO实例粘贴到训练图像的不同部分时的结果。与将实例粘贴到COCO中相比，将实例粘贴到伪标记数据中可以获得更大的改进。由于伪标记集中的图像数量更多，使用具有更多背景变化的图像有助于复制-粘贴。当我们将COCO实例粘贴到COCO和伪标记图像上时，我们获得了对自训练的最大增益（+1.4个box AP）。
 
-**Data to Copy from 复制的数据来源**
+**复制的数据来源 Data to Copy from**
 我们还探索了一种替代方法，通过将来自未标记数据集的伪标记对象直接粘贴到COCO标记数据集中，以利用复制-粘贴来并入额外的数据。不幸的是，这种设置没有显示出额外的平均准确率（AP）改进。
 
-### 4.5. Copy-Paste improves COCO state-of-the-art Copy-Paste达到了COCO的新SOTA
+<a id="4.5Copy-Paste达到了COCO的新SOTA"></a>
+### 4.5 Copy-Paste达到了COCO的新SOTA  Copy-Paste improves COCO state-of-the-art 
 接下来，我们研究了复制-粘贴是否可以改进COCO上的最先进实例分割方法。表4展示了在强大的54.8个box AP COCO模型基础上应用复制-粘贴的结果。这张表旨在作为最先进性能的参考。为了进行严格的比较，我们需要注意使用相同的代码库、训练数据和训练设置，如学习率调度、权重衰减、数据预处理和增强、参数和FLOPs的控制、架构正则化[60]、训练和推理速度等。该表的目标是展示复制-粘贴增强的好处以及与自训练的附加收益。我们的基线模型是具有EfficientNet-B7骨干和NAS-FPN的级联Mask-RCNN。我们观察到使用复制-粘贴时，box AP提高了1.2个，mask AP提高了0.5个。当结合使用无标签COCO和无标签Objects365 [49]进行伪标记的自训练时，我们看到box AP进一步提高了2.5个，mask AP提高了2.2个，在没有测试时增强和模型集成的情况下，模型在COCO test-dev上取得了强大的57.3个box AP和49.1个mask AP的性能。
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/794c06bb-e008-44fe-b5d2-8a48f9d9b093)  
 表4. COCO目标检测和实例分割的与最先进模型的比较。模型名称旁边的括号表示输入图像尺寸。†表示测试时使用了增强技术的结果
 
-### 4.6. Copy-Paste produces better representations for PASCAL detection and segmentation Copy-Paste在PASCAL检测和分割的任务上产生了更好的效果
+<a id="4.6Copy-Paste在PASCAL检测和分割的任务上产生了更好的效果"></a>
+### 4.6. Copy-Paste在PASCAL检测和分割的任务上产生了更好的效果 Copy-Paste produces better representations for PASCAL detection and segmentation 
 在之前的研究中，我们已经展示了简单的复制-粘贴增强对实例分割的改进性能。在本节中，我们研究了使用复制-粘贴在COCO上训练的预训练实例分割模型的迁移学习性能。我们在PASCAL VOC 2007数据集上进行了迁移学习实验。表5展示了学习到的复制-粘贴模型在PASCAL检测任务上与基线模型的对比结果。表6也展示了PASCAL语义分割任务的迁移学习结果。在PASCAL检测和PASCAL语义分割任务中，我们发现使用复制-粘贴训练的模型相比基线模型更适合进行微调的迁移学习。 
 
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/39e22fec-5443-4988-9cc1-feff3ead70c0)  
@@ -152,19 +165,19 @@ Copy-Paste增强策略容易集成到任何实例分割代码库中，可以有�
 ![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/0e8f12a8-1afe-4d21-92e7-7ddd18cac9cc)  
 表格6。PASCAL VOC 2012验证集上的语义分割结果。我们展示了我们使用COCO数据集中的复制-粘贴增强方法与未使用该增强方法的EfficientNet-B7 NAS-FPN模型的预训练结果。†表示多尺度/翻转集成推断。
 
-
-### 4.7. Copy-Paste provides strong gains on LVIS Copy-Paste为LVIS提供了巨大的增益
+<a id="4.7Copy-Paste为LVIS提供了巨大的增益"></a>
+### 4.7 Copy-Paste为LVIS提供了巨大的增益 Copy-Paste provides strong gains on LVIS 
 我们在LVIS数据集上对Copy-Paste进行基准测试，以了解其在具有长尾分布的1203个类别的数据集上的表现。LVIS通常使用两种不同的训练范式：（1）单阶段，在该范式中，检测器直接在LVIS数据集上进行训练；（2）双阶段，在该范式中，第一阶段的模型经过细调，并采用类别重新平衡损失来帮助处理类别不平衡问题。
 
-**Copy-Paste improves single-stage LVIS training. Copy-Paste改进了单阶段LVIS训练**
+**Copy-Paste改进了单阶段LVIS训练 Copy-Paste improves single-stage LVIS training**
 单阶段训练范式与我们在COCO上的Copy-Paste设置非常相似。除了标准的训练设置外，还使用一些方法来处理LVIS上的类别不平衡问题。一种常见的方法是来自[21]的重复因子采样（RFS），其中t=0.001。这种方法旨在通过对包含较少频繁出现的对象类别的图像进行过采样，以帮助解决LVIS上的类别不平衡问题。对于LVIS上的单阶段训练，我们按照COCO上的相同训练参数进行训练，使用256批大小进行180k步。如[21]建议的，我们将每个图像的检测数增加到300，并将得分阈值降低到0。表8显示了将Copy-Paste应用于具有640×640输入尺寸的EfficientNet-B7 FPN的强单阶段LVIS基准的结果。我们观察到，Copy-Paste数据增强在AP、APc和APf上优于RFS，但在APr（罕见类别的AP）上表现不佳。最佳的整体结果来自结合RFS和Copy-Paste数据增强，获得了+2.4 AP和+8.7 APr的提升。
 
-**Copy-Paste improves two-stage LVIS training. Copy-Paste改进了两阶段LVIS训练**
+**Copy-Paste改进了两阶段LVIS训练 Copy-Paste improves two-stage LVIS training**
 两阶段训练被广泛采用来解决数据不平衡问题，并在LVIS上获得良好的性能[37, 46, 55]。我们的研究目标是研究在这种两阶段设置中Copy-Paste的有效性。我们的两阶段训练如下：首先，我们使用标准训练技术（即与我们的单阶段训练相同）训练目标检测器，然后我们使用Class-Balanced Loss [8]对第一阶段训练的模型进行微调。一个类别的权重计算公式为(1-β)/(1-β^n)，其中n是该类别的实例数，β=0.999。
 
 在第二阶段的微调过程中，我们使用3倍的训练周期，并且仅使用分类损失更新Mask R-CNN中的最终分类层。从表9中的遮罩AP结果可以看出，使用Copy-Paste训练的模型学习到了更好的低样本类别特征（在APr上提高了2.3，APc上提高了2.6）。有趣的是，我们发现在两阶段训练中，RFS虽然在单阶段训练中非常有用并且与Copy-Paste具有叠加效果，但却对性能产生了负面影响。对于这一发现可能的解释是，使用RFS学习到的特征比使用原始LVIS数据集学习到的特征要差。我们将在未来的工作中对RFS和数据增强之间的权衡进行更详细的研究。
 
-**Comparison with the state-of-the-art. 和SOTA进行对比**
+**和SOTA进行对比 Comparison with the state-of-the-art**
 此外，我们在表7中将我们的两阶段模型与LVIS6的最新方法进行了比较。令人惊讶的是，我们最小的模型ResNet-50 FPN在性能上优于使用ResNeXt-101-32×8d骨干网络的强基线模型cRT [33]。
 使用Copy-Paste训练的EfficientNet-B7 NAS-FPN模型（不包括Cascade 7）在没有测试时间增强的情况下实现了与LVIS挑战2020获胜者相当的总体Mask AP和Box AP性能。此外，它在罕见类别的Mask APr达到了32.1，超过LVIS挑战2020获胜作品的+3.6 Mask APr。
 
