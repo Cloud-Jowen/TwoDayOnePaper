@@ -10,6 +10,7 @@
 [**3.网络结构**](#3.网络结构)  
 &emsp;[**3.1 Overview**](#3.1Overview)  
 &emsp;[**3.2 有向点自适应学习**](#3.2有向点自适应学习)  
+&emsp;[**3.3 自适应点的评估和分配**](#3.3自适应点的评估和分配)  
 [**4.实验 Experiments**](#4.实验Experiments)  
 [**5.结论 Conclusion**](#5.结论Conclusion)  
 
@@ -118,6 +119,7 @@ P_o - P_c
   & 0,otherwise.
 \end{matrix}\right.
 
+<a id="3.3自适应点的评估和分配"></a>
 ### 3.3 自适应点评估和分配 Adaptive Points Assessment and Assignment
 由于缺乏直接监督，学习高质量的点对于在航空图像中密集排列且方向任意的物体自适应捕捉几何特征至关重要。为此，我们提出了一种有效的评估和分配方案，用于衡量学习点的质量，并通过在训练阶段将自适应点的代表样本分配为正样本来实现这一目标。
 <a id="4.实验Experiments"></a>
