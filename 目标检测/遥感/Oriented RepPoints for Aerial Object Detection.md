@@ -45,7 +45,10 @@
 总之，本文的主要贡献包括：  
 （1）提出了一种名为Oriented RepPoints的有效航空目标检测器，其中引入了灵活的自适应点作为表示，实现了定向目标检测；  
 （2）针对自适应点学习，提出了一种新颖的质量评估和样本分配方案，该方案不仅从分类、定位角度选择点样本，还从方向、点特征相关性方面进行选择；  
-（3）在四个具有挑战性的数据集上进行了大量实验，展示了有希望的定性和定量结果。  
+（3）在四个具有挑战性的数据集上进行了大量实验，展示了有希望的定性和定量结果。 
+
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/bdc10e27-ea1e-4c03-bb31-ae416918b0aa)  
+(表 4. 在 DOTA 数据集上与最先进方法的比较。所有报告结果均在单尺度的 DOTA 数据集上进行。红色表示该列中的最佳结果，蓝色表示次佳结果。"-O"表示具有定向边界框的检测结果（下同），该表在文中没有引用位置)
 
 <a id="2.相关工作Relatedwork"></a>
 ## 2.相关工作 Related work
@@ -186,7 +189,7 @@ k = \sigma *N_t
 
 在训练过程中，使用点分配器[46]来获取初始化阶段中中心点的样本分配情况。在改进阶段，采用了提出的自适应点评估和分配（APAA）方案，根据质量度量 Q 选择高质量的点样本。只有被选定的正样本点集才会被分配目标的地面真实边界框。如图3所示，APAA方案使检测器能够预测高质量的定向 reppoints，从而提高分类置信度和定位得分。值得一提的是，所提出的方案仅用于训练，不会在推理阶段增加计算负担。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/6dd6b9a7-52fa-4c6a-9473-85484df2a9d7)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/6dd6b9a7-52fa-4c6a-9473-85484df2a9d7)  
 (图3. 使用和不使用APAA方案的定向reppoints预测分类置信度和定位得分之间的相关性。)
 
 
@@ -214,35 +217,35 @@ k = \sigma *N_t
 
 **定向转换函数的评估**  传统的基于点集的目标检测器RepPoints [46]通过诸如最小-最大（min-max）之类的正方形转换函数获得直立边界框，但这种方法无法处理具有任意方向的航空目标。为了建立一个合理的基准，我们比较了不同的转换函数，在训练和后处理期间将适应点映射到定向框内。表1显示了实验结果。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/4b1907d7-a960-4d32-9e97-656659e1bbb0)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/4b1907d7-a960-4d32-9e97-656659e1bbb0)  
 (表 1. 不同转换函数的比较。)
 
 基于原始的RepPoints模型，使用训练和后处理中的最小-最大函数，能够达到49.69%的mAP。而使用我们提出的定向MinAeraRect函数进行后处理以获得旋转的矩形框，则能够达到53.21%的mAP。使用可微分的定向NearestGTCorner和ConvexHull函数，我们的定向RepPoints分别获得了66.97%和68.89%的mAP，表明定向转换函数对航空目标检测至关重要。
 
 **与基于角度的检测器比较**  为了检验自适应点表示方法的有效性，我们将我们的方法与基于角度的定向回归在基于锚点的检测器上进行了比较。就像 $`S^2A-Net`$ [8]中那样，基于角度的检测器在初始化阶段为每个特征图位置预设一个正方形锚点，其中预测的基于角度的框被视为下一阶段获取定向边界框的优化锚点。表2展示了具有不同骨干网络的两个检测器的结果。在使用ResNet-50-FPN和ResNet-101-FPN作为骨干网络时，定向RepPoints分别比基于角度的定向回归性能提高了+1.39%和+1.46%的mAP。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/f714d870-e337-47e1-a951-9f8e98459d43)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/f714d870-e337-47e1-a951-9f8e98459d43)  
 (表 2. 直接基于角度的定向回归和定向 RepPoints 在定向目标检测中的比较。)
 
 
 **对空间约束的评估** 为了研究空间约束的有效性，我们将其与不使用空间约束的基准方法进行了比较。表3显示了实验结果。可以观察到，我们提出的空间约束非常有效，特别是对于具有弱特征表示的航空目标，比如直升机（HC），以及类似背景的物体，例如棒球场（BD）、桥梁（BR）和环状交叉路口（RA）。这是因为空间约束强制使自适应点位于它们所属的实例对象上。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/87a4b780-cc68-4a4a-92d2-3015f8b4a432)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/87a4b780-cc68-4a4a-92d2-3015f8b4a432)  
 (表 3. 空间约束性能评估。BD，BR，RA 和 HC 分别代表棒球场，桥梁，环岛和直升机的类别。)
 
 **用于自适应点学习的APAA方案** 为了研究所提出的用于自适应点学习的APAA方案，我们首先逐项报告质量评估项的性能。表5给出了在质量评估指标Q的不同设置下的结果。检测结果逐步改善，并且所提出的方法在使用所有四个项时获得了最佳性能，mAP为75.97%，增益为+5.86%。这表明质量评估指标能够有效反映用于航空目标检测的自适应点的质量。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/883fa0cf-e634-48a4-8ef1-0c7cd9678d19)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/883fa0cf-e634-48a4-8ef1-0c7cd9678d19)  
 (表 5. 对 APAA 方案中质量度量 Q 不同设置的性能评估。)
 
 在APAA方案中，分配的自适应点样本数量由采样比率σ确定。如表6所示，在σ = 0.4时，模型实现了最佳性能。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/2ca182ad-87f0-41d5-bc31-a9406d297803)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/2ca182ad-87f0-41d5-bc31-a9406d297803)  
 (表 6. 对 APAA 方案中动态 top k 分配的不同 σ 值进行评估。)
 
 此外，我们将我们的APAA方案与其他用于训练所提出的检测器的样本分配方案进行了比较，包括最大IoU [28]、ATSS [48]、PAA [13]和CFA [7]。正如表7所示，我们的APAA方案在没有复杂操作的情况下实现了最佳性能，这证明了我们所提出的APAA方案对于自适应点学习是有效的。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/be7b386f-56ef-4220-bf02-5c718da57649)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/be7b386f-56ef-4220-bf02-5c718da57649)  
 (表 7. 不同样本分配方法在定向 RepPoints 检测器上的比较。)
 
 
@@ -250,37 +253,32 @@ k = \sigma *N_t
 ### 4.4 和SOTA方法比较 Comparison with the State-of-the-art methods
 **在DOTA数据集上的结果**。我们报告了单尺度的完整实验结果，以便与之前的方法进行公平比较。使用ResNet-50-FPN和ResNet-101-FPN作为骨干网络，我们的方法分别获得了75.97%和76.52%的平均精度（mAP）。它优于其他使用相应骨干网络的方法。在使用Swin-Transformer的微小版本（Swin-T-FPN）作为骨干网络，并结合随机旋转和HSV转换时，我们实现了77.63%的mAP，表现最佳。图4展示了在DOTA测试集上的一些可视化结果。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/bf52d499-7dbe-4538-92de-054c6b5ca122)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/bf52d499-7dbe-4538-92de-054c6b5ca122)  
 (图 4. 在 DOTA 测试集上的 Oriented RepPoints 的示例检测结果。)
 
 
 **在HRSC2016数据集上的结果**。为了全面比较HRSC2016数据集，我们使用VOC2007和VOC2012指标报告了结果。表8显示了实验结果。我们的定向RepPoints在使用ResNet-50-FPN骨干网络时在VOC2012度量下取得了最佳性能，并在VOC2007度量下排名第二。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/25de8342-490b-49c3-b7a8-e0caffc0e581)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/25de8342-490b-49c3-b7a8-e0caffc0e581)  
 (表 8. 在 HRSC2016 测试集上的结果。mAP(07) 和 mAP(12) 分别代表 VOC2007 和 VOC2012 的平均精度（mAP）指标下的结果。)
 
 **在UCAS-AOD数据集上的结果**。UCAS-AOD数据集包含大量具有复杂环境的小目标。表9显示了与该数据集上最新方法的评估结果。我们提出的方法取得了90.11%的mAP，表现最佳。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/5b28256c-a80d-48ad-bdfe-a4176041f8e8)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/5b28256c-a80d-48ad-bdfe-a4176041f8e8)  
 (表 9. 在 UCAS-AOD 数据集上的性能比较。)
 
 **在DIOR-R数据集上的结果**。DIOR-R数据集包含20类航空目标。与该数据集上的最新方法相比，我们实现了66.71%的mAP，表现最佳，并超越了其他方法，如表10所示。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/d0951154-ff8c-49d4-a8c5-c6a7b7c7eb4b)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/d0951154-ff8c-49d4-a8c5-c6a7b7c7eb4b)  
 (表 10. 在 DIOR-R 数据集上的检测精度。所有实验结果均使用 ResNet-50-FPN 骨干网络执行。)
 
 <a id="4.5对方向准确性的评估"></a>
 ### 4.5 对方向准确性的评估 Evaluation on Orientation Accuracy
 我们进一步进行实验，评估在DOTA数据集上使用ResNet-50-FPN骨干的定向检测器的方向精度。我们采用所有类别的平均方向误差（mAOE◦）作为评估指标。如表11所示，我们提出的方法获得了最小的方向误差，这表明相较于传统的基于方向回归的方法，我们基于点集的方法对于精确的定向目标检测是有效的
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/0b62b00b-6f09-460b-af88-538e8f95c0de)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/0b62b00b-6f09-460b-af88-538e8f95c0de)  
 (表 11. 在 DOTA 数据集上定向误差的比较。所有实验均使用训练集进行训练，验证集进行测试。)
-
-
 
 <a id="5.结论Conclusion"></a>
 ## 5.结论 Conclusion
 本文提出了一种有效的航空目标检测器，利用自适应点作为细粒度表示，能够捕捉任意方向、混乱和非轴对齐目标的关键几何特征。为了有效地学习自适应点，我们引入了质量评估和样本分配方案，以衡量和选择高质量的训练样本点。此外，我们使用空间约束来惩罚位于定向框外部的点，以实现稳健的自适应点学习。我们在四个测试平台上进行了大量实验证明了我们提出的方法的有效性。
-
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/bdc10e27-ea1e-4c03-bb31-ae416918b0aa)
-(表 4. 在 DOTA 数据集上与最先进方法的比较。所有报告结果均在单尺度的 DOTA 数据集上进行。红色表示该列中的最佳结果，蓝色表示次佳结果。"-O"表示具有定向边界框的检测结果（下同）)
