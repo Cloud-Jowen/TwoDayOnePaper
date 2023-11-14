@@ -1,67 +1,36 @@
 # 操作
 ## 操作1 切分 DOTA 数据集
+DOTA 数据集的图像尺寸过大，需要对其进行切分，通常切分至 1024 * 1024 大小的图片。同时，为了避免误切 gt，会在切分时保留一些重复区域 gap，通常 gap = 200  
+更多切分细节请参考各论文中的实验设置。
+
+切分准备：进入 `./mmrotate/tools/data/dota/split/split_configs` 文件夹下，可以看到有如下几个 json 文件,需修改其内部的配置  
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/05c659b0-04a1-4c0c-a64b-5b732b6d491b)  
+`ms` \ `ss` 表示多尺度\单尺度切分，后缀表示相应的数据集  
+以 `ss_train.sh` 为例，需要修改的一共有四个路径：`img_dirs`,`ann_dirs`,`save_dir`,`save_ext`。分别是 数据集图片文件夹\数据集标签文件夹\切分后的保存文件夹\切分后图片的后缀格式
+例如：
+```
+  "img_dirs": [
+    "/Jowen/dataset/DOTA/train/images"
+  ],
+  "ann_dirs": [
+    "/Jowen/dataset/DOTA/train/labelTxt"
+  ],
+  "save_dir": "Jowen/dataset/DOTA-split-1024/train",
+  "save_ext": ".png"
+```
+**请注意**：不要使用已经存在的文件夹作为`save_dir`，否则会报错
+切分命令：`python {root}/mmrotate/tools/data/dota/split/img_split.py --base-json {json_path}`
+其中`{root}`和`{json_path}`请换成相应的路径，例如
+```
+python /Jowen/mmrotate/tools/data/dota/split/img_split.py --base-json Jowen/mmrotate/tools/data/dota/split/split_configs/ss_train.json
+```
+
 
 # 问题
 ### 问题1 对 DOTA 测试集进行测试时，计算 mAP 出现问题
-
-训练命令：此处 {} 表示未填写的实际路径
-```
-python .tools/test.py  \
-  {config.py} \
-  {checkpoint.pt} \
-  --work-dir {output_file} \
-  --eval mAP 
-```
-报错提示：
-```
-  File "/mnt/sdb1/jsy/yjw/Jowen/mmrotate/tools/test.py", line 271, in <module>
-    main()
-  File "/mnt/sdb1/jsy/yjw/Jowen/mmrotate/tools/test.py", line 263, in main
-    metric = dataset.evaluate(outputs, **eval_kwargs)
-  File "/mnt/sdb1/jsy/yjw/Jowen/mmrotate/mmrotate/datasets/dota.py", line 202, in evaluate
-    mean_ap, _ = eval_rbbox_map(
-  File "/mnt/sdb1/jsy/yjw/Jowen/mmrotate/mmrotate/core/evaluation/eval_map.py", line 177, in eval_rbbox_map
-    cls_dets, cls_gts, cls_gts_ignore = get_cls_results(
-  File "/mnt/sdb1/jsy/yjw/Jowen/mmrotate/mmrotate/core/evaluation/eval_map.py", line 114, in get_cls_results
-    cls_gts.append(ann['bboxes'][gt_inds, :])
-TypeError: list indices must be integers or slices, not tuple
-```
-报错原因：  
-定位到目标函数
-```python
-def get_cls_results(det_results, annotations, class_id):
-    """Get det results and gt information of a certain class.
-
-    Args:
-        det_results (list[list]): Same as `eval_map()`.
-        annotations (list[dict]): Same as `eval_map()`.
-        class_id (int): ID of a specific class.
-
-    Returns:
-        tuple[list[np.ndarray]]: detected bboxes, gt bboxes, ignored gt bboxes
-    """
-    cls_dets = [img_res[class_id] for img_res in det_results]
-
-    cls_gts = []
-    cls_gts_ignore = []
-    for ann in annotations:
-        gt_inds = ann['labels'] == class_id
-        cls_gts.append(ann['bboxes'][gt_inds, :])
-
-        if ann.get('labels_ignore', None) is not None:
-            ignore_inds = ann['labels_ignore'] == class_id
-            cls_gts_ignore.append(ann['bboxes_ignore'][ignore_inds, :])
-
-        else:
-            cls_gts_ignore.append(torch.zeros((0, 5), dtype=torch.float64))
-
-    return cls_dets, cls_gts, cls_gts_ignore
-```
-报错语句为：`cls_gts.append(ann['bboxes'][gt_inds, :])`  
-该问题是对 DOTA 测试集进行切分之后，部分图片检测不到目标，导致 gt_inds 为 False，进而导致语句报错  
-经输出 `annotations` 和 `class_id` 后可发现
-`annotations(部分) = [{'bboxes': [], 'labels': []}, {'bboxes': [], 'labels': []}, {'bboxes': [], 'labels': []}, {'bboxes': [], 'labels': []}]
-class_id = 0`
+**训练命令**   
+**报错提示**  
+**报错原因**    
+**解决办法**    
 
 
-解决办法：
