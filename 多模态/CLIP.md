@@ -3,7 +3,7 @@
 [**相关链接**](#相关链接)  
 [**0.摘要 Abstract**](#0.摘要Abstract)  
 [**1.引言和动机 Introduction and Motivating Work**](#1.引言和动机IntroductionandMotivatingWork)  
-[**2.相关工作 Related work**](#2.相关工作Relatedwork)  
+[**2.方法 Approach**](#2.方法Approach)  
 &emsp;[**2.1 自然语言监督**](#2.1自然语言监督)  
 &emsp;[**2.2 创建一个足够大的数据集**](#2.2创建一个足够大的数据集)  
 &emsp;[**2.3 选择高效的预训练方法**](#2.3选择高效的预训练方法)  
