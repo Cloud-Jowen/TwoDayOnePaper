@@ -135,7 +135,7 @@ L_{1} = \frac{1}{N}\sum_{i=1}^n F_{cls}(p_{i},{p_{i}^{*}}) + \frac{1}{N}{p_{i}^{
 #### 3.2.1 Rotated RoIAlign 
 旋转的RoIAlign是一种从每个定向proposal中提取旋转不变特征的操作。现在，我们根据图5来描述旋转的RoIAlign的过程。由定向RPN生成的定向proposal通常是一个平行四边形（图5中的蓝色框），用参数$`v = (v1，v2，v3，v4)`$表示，其中$`v1，v2，v3`$和$`v4`$是其顶点坐标。为了方便计算，我们需要将每个平行四边形调整为具有方向的矩形。具体来说，我们通过将平行四边形的较短对角线（图5中从v2到v4的线段）延长至与较长对角线具有相同的长度来实现这一点。经过这个简单的操作，我们从平行四边形中得到了定向矩形$`（x，y，w，h，θ）`$（图5中的红色框），其中θ∈[−π/2，π/2]由水平轴和矩形的较长边之间的交角定义。
 
-![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/e8600762-a3be-409d-b055-0b31bc4ea4be)
+![image](https://github.com/Cloud-Jowen/CVPaper_Note/assets/56760687/e8600762-a3be-409d-b055-0b31bc4ea4be)  
 (图5：旋转RoIAlign过程的示意图。蓝色框是由有向RPN生成的平行四边形proposal，最左边的红色框是其对应的用于投影和旋转RoIAlign的矩形proposal。)
 
 接下来，我们将定向矩形$`（x，y，w，h，θ）`$投影到步长为$`s`$的特征图$`F`$上，以通过以下操作得到一个旋转的RoI，该旋转的RoI由$`(x_r，y_r，w_r，h_r，θ)`$定义。
