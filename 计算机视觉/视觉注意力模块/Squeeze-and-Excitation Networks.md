@@ -6,8 +6,8 @@
 [**2.相关工作 Related work**](#2.相关工作Relatedwork)  
 [**3.Squeeze-and-Excitation Blocks**](#3.Squeeze-and-ExcitationBlocks)  
 [**4.模型和计算复杂度 Model and Computational Complexity**](#4.模型和计算复杂度ModelandComputationalComplexity)  
-[**5.结论 Conclusion**](#5.结论Conclusion)  
-
+[**5.实施方案 Implementation**](#5.实施方案Implementation)  
+ 
 
 
 ## 相关链接
@@ -68,8 +68,11 @@ SE构建块的基本结构如图1所示。对于任何给定的变换$` F_{tr}�
 
 其中，r表示缩减比例，S表示阶段数（每个阶段指的是在具有相同空间维度的特征图上操作的一组块），Cs表示输出通道的维度，Ns表示阶段s中重复的块数。相对于ResNet-50所需的约2500万参数，SE-ResNet-50引入了大约250万个额外参数，增加了约10%。其中，大部分参数来自网络的最后一个阶段，在这个阶段中激发操作涉及到最大的通道维度。然而，我们发现，可以以较小的性能成本（在ImageNet上<0.1%的top-1错误）移除SE模块的最后阶段，将相对参数增加降低到约4%，这在参数使用是一个关键考虑因素的情况下可能会很有用（请参阅第6.4节中的进一步讨论）。
 
-<a id="4.实验Experiments"></a>
-## 4.实验 Experiments
+<a id="5.实施方案Implementation"></a>
+## 5.实施方案 Implementation
+每个普通网络及其对应的SE版本在相同的优化方案下进行训练。在ImageNet上的训练过程中，我们采用了标准做法，对图像进行随机尺寸裁剪[43]至224×224像素（Inception-ResNet-v2和SE-Inception-ResNet-v2为299×299像素），并进行随机水平翻转。输入图像通过通道均值减法进行归一化处理。此外，我们采用了[36]中描述的数据平衡策略进行小批量采样。网络在我们的分布式学习系统"ROCS"上进行训练，该系统设计用于高效并行训练大型网络。优化过程使用带有动量0.9的同步SGD，并使用mini-batch大小为1024。初始学习率设置为0.6，每30个epoch减小10倍。所有模型从头开始训练100个epoch，使用[9]中描述的权重初始化策略。
+
+在测试时，我们对验证集应用中心裁剪评估，从每个图像中裁剪出224×224像素，其中较短的边先调整为256（对于Inception-ResNet-v2和SE-Inception-ResNet-v2调整为352）。
 
 <a id="5.结论Conclusion"></a>
 ## 5.结论 Conclusion
