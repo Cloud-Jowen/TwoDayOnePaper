@@ -5,7 +5,7 @@
 [**1.介绍 Introduction**](#1.介绍Introduction)  
 [**2.相关工作 Related work**](#2.相关工作Relatedwork)  
 [**3.Squeeze-and-Excitation Blocks**](#3.Squeeze-and-ExcitationBlocks)  
-[**4.实验 Experiments**](#4.实验Experiments)  
+[**4.模型和计算复杂度 Model and Computational Complexity**](#4.模型和计算复杂度ModelandComputationalComplexity)  
 [**5.结论 Conclusion**](#5.结论Conclusion)  
 
 
@@ -27,6 +27,8 @@
 在这篇论文中，我们研究了架构设计的另一个方面——通道关系，引入了一种新的架构单元，我们称之为“Squeeze-and-Excitation”（SE）块。我们的目标是通过明确地建模卷积特征通道之间的相互依赖关系来提高网络的表征能力。为实现这一目标，我们提出了一种机制，使网络能够执行特征重新校准，通过这种机制，网络可以学习利用全局信息来有选择性地增强特定的通道特征。
 
 SE构建块的基本结构如图1所示。对于任何给定的变换$` F_{tr}：X→U `$，其中$` X  \in R^{H^{'}×W^{'}×C^{'}} `$，$`U  \in R^{H×W×C}`$（例如，一个卷积或一组卷积），我们可以构建相应的SE块，以执行特征重新校准，具体操作如下。首先，特征U经过一个挤压操作，该操作在空间维度H×W上聚合特征图，生成一个通道描述符。这个描述符嵌入了通道特征响应的全局分布，使得网络的下层可以利用来自全局感受野的信息。然后进行激励操作，通过基于通道依赖关系的自门控机制学习每个通道的样本特定激活，来控制每个通道的激励。最后，对特征图U进行重新加权，生成SE块的输出，然后可以直接馈送到后续层中。
+![image](https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/8eaf8579-e505-4965-a75d-7bc84d9a1ee5)  
+
 
 一个SE网络可以通过简单地堆叠一系列SE构建块来生成。SE块也可以被用作架构中任何深度处原始块的即插即用替代品。然而，虽然构建块的模板是通用的，正如我们在第6.4节中所展示的，它在不同深度的角色会根据网络的需求进行调整。在早期层中，它学会以与类别无关的方式激发信息丰富的特征，增强共享的较低级表示的质量。在后续层中，SE块变得越来越专业化，并以高度特定于类别的方式响应不同的输入。因此，通过特征重新校准所进行的益处
 
@@ -49,6 +51,10 @@ SE构建块的基本结构如图1所示。对于任何给定的变换$` F_{tr}�
 <a id="3.Squeeze-and-ExcitationBlocks"></a>
 ## 3. Squeeze-and-Excitation Blocks
 
+
+<a id="4.模型和计算复杂度ModelandComputationalComplexity"></a>
+## 4.模型和计算复杂度 Model and Computational Complexity
+Model and Computational Complexity
 
 <a id="4.实验Experiments"></a>
 ## 4.实验 Experiments
