@@ -52,6 +52,8 @@ SE构建块的基本结构如图1所示。对于任何给定的变换$` F_{tr}�
 ```math
 u_c = v_c * X =  \sum_{s=1}^{C^`} v_{c}^{s} * x^{s}
 ```
+这里的 * 表示卷积运算，$` v = [v_{c}^{1} , v_{c}^{2}, . . . , v_{c}^{C^{'}} ] `$ ，$` X = [x_{c}^{1} , x_{c}^{2}, . . . , x_{c}^{C^{'}} ]`$（为了简化符号，偏置项被省略），而vcs是一个2D空间卷积核，因此表示v的单个通道对应于X的相应通道上执行的卷积操作。由于输出是通过所有通道的求和产生的，通道依赖关系隐含地嵌入在vc中，但这些依赖关系与滤波器捕获的空间相关性纠缠在一起。我们的目标是确保网络能够增加对信息特征的敏感度，以便它们可以被后续变换利用，并抑制不太有用的特征。我们建议通过显式建模通道相互依赖性，在下一次变换之前通过两个步骤（压缩和激发）重新校准滤波器响应来实现这一目标。SE构建块的图示如图1所示。
+
 
 
 ### 3.3 Exemplars: SE-Inception and SE-ResNet
@@ -69,7 +71,7 @@ u_c = v_c * X =  \sum_{s=1}^{C^`} v_{c}^{s} * x^{s}
 
 在这里，SE块的变换Ftr被视为残差模块的非恒等分支。压缩和激发都在与恒等分支求和之前进行。可以按照类似的方案构建更多与ResNeXt [47]、Inception-ResNet [42]、MobileNet [13]和ShuffleNet [52]集成的变体。我们在表1中描述了SE-ResNet-50和SE-ResNeXt-50的架构。  
 
-![image](https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/b22aba76-78a0-46fa-bc88-35ae15741520)
+![image](https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/b22aba76-78a0-46fa-bc88-35ae15741520)  
 (表1：（左）ResNet-50，（中）SE-ResNet-50，（右）使用32×4d模板的SE-ResNeXt-50。在括号内列出了残差模块的形状和具有特定参数设置的操作，并且一个阶段中堆叠的块的数量显示在外部。在fc后面的内部括号表示SE模块中两个全连接层的输出维度)
 
 <a id="4.模型和计算复杂度ModelandComputationalComplexity"></a>
