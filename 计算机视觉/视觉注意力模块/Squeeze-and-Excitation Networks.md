@@ -49,6 +49,9 @@ SE构建块的基本结构如图1所示。对于任何给定的变换$` F_{tr}�
 <a id="3.Squeeze-and-ExcitationBlocks"></a>
 ## 3. Squeeze-and-Excitation Blocks
 “Squeeze-and-Excitation”块是一个计算单元，可以针对任何给定的转换进行如下构建：$` F_{tr}：X→U ， X  \in R^{H^{'}×W^{'}×C^{'}} ，U  \in R^{H×W×C}`$。为了简化，接下来的符号表示中，我们将 $` F_{tr} `$  视为一个卷积算子。假设$` V = [v_1, v_2, ..., v_C] `$ 表示学习到的滤波器核集合，其中$`v_c `$表示第$` c`$个滤波器的参数。我们可以将$` F_{tr} `$的输出写成$`U = [u_1, u_2, ..., u_C]`$，其中
+```math
+u_c = v_c * X =  \sum_{s=1}^{C^`} v_{c}^{s} * x^{s}
+```
 
 
 ### 3.3 Exemplars: SE-Inception and SE-ResNet
