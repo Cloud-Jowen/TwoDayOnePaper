@@ -49,6 +49,21 @@ SE构建块的基本结构如图1所示。对于任何给定的变换$` F_{tr}�
 <a id="3.Squeeze-and-ExcitationBlocks"></a>
 ## 3. Squeeze-and-Excitation Blocks
 
+### 3.3 Exemplars: SE-Inception and SE-ResNet
+将SE块应用于AlexNet [21]和VGGNet [39]非常简单。SE块的灵活性意味着它可以直接应用于超越标准卷积的转换中。为了说明这一点，我们在现代架构中引入SE块，以实现复杂的设计。
+
+对于非残差网络（如Inception网络），SE块将变换$` F_{tr} `$ 应用于整个Inception模块（参见图2）。  
+
+![image](https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/5ff79879-aec6-47f9-9f97-650b006a39f9)  
+(图2：原始Inception模块（左）和SE-Inception模块（右）的结构图。)
+
+通过对架构中的每个此类模块进行此更改，我们构建了一个SE-Inception网络。此外，SE块具有足够的灵活性，可以用于残差网络。图3描述了一个SE-ResNet模块的框图。
+
+![image](https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/8052b1ad-516b-4e99-854f-8d50d90ea814)  
+(图3：原始残差模块（左）和SE-ResNet模块（右）的结构图。)
+
+
+在这里，SE块的变换Ftr被视为残差模块的非恒等分支。压缩和激发都在与恒等分支求和之前进行。可以按照类似的方案构建更多与ResNeXt [47]、Inception-ResNet [42]、MobileNet [13]和ShuffleNet [52]集成的变体。我们在表1中描述了SE-ResNet-50和SE-ResNeXt-50的架构。
 
 <a id="4.模型和计算复杂度ModelandComputationalComplexity"></a>
 ## 4.模型和计算复杂度 Model and Computational Complexity
