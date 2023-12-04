@@ -1,4 +1,4 @@
-# 网络名称（此处应替换为具体的网络名称）
+# Squeeze-and-Excitation Networks
 
 [**相关链接**](#相关链接)  
 [**0.摘要 Abstract**](#0.摘要Abstract)  
