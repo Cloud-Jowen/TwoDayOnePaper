@@ -48,6 +48,8 @@ SE构建块的基本结构如图1所示。对于任何给定的变换$` F_{tr}�
 
 <a id="3.Squeeze-and-ExcitationBlocks"></a>
 ## 3. Squeeze-and-Excitation Blocks
+“Squeeze-and-Excitation”块是一个计算单元，可以针对任何给定的转换进行如下构建：$` F_{tr}：X→U ， X  \in R^{H^{'}×W^{'}×C^{'}} ，U  \in R^{H×W×C}`$。为了简化，接下来的符号表示中，我们将 $` F_{tr} `$  视为一个卷积算子。假设$` V = [v_1, v_2, ..., v_C] `$ 表示学习到的滤波器核集合，其中$`v_c `$表示第$` c`$个滤波器的参数。我们可以将$` F_{tr} `$的输出写成$`U = [u_1, u_2, ..., u_C]`$，其中
+
 
 ### 3.3 Exemplars: SE-Inception and SE-ResNet
 将SE块应用于AlexNet [21]和VGGNet [39]非常简单。SE块的灵活性意味着它可以直接应用于超越标准卷积的转换中。为了说明这一点，我们在现代架构中引入SE块，以实现复杂的设计。
@@ -62,8 +64,10 @@ SE构建块的基本结构如图1所示。对于任何给定的变换$` F_{tr}�
 ![image](https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/8052b1ad-516b-4e99-854f-8d50d90ea814)  
 (图3：原始残差模块（左）和SE-ResNet模块（右）的结构图。)
 
+在这里，SE块的变换Ftr被视为残差模块的非恒等分支。压缩和激发都在与恒等分支求和之前进行。可以按照类似的方案构建更多与ResNeXt [47]、Inception-ResNet [42]、MobileNet [13]和ShuffleNet [52]集成的变体。我们在表1中描述了SE-ResNet-50和SE-ResNeXt-50的架构。  
 
-在这里，SE块的变换Ftr被视为残差模块的非恒等分支。压缩和激发都在与恒等分支求和之前进行。可以按照类似的方案构建更多与ResNeXt [47]、Inception-ResNet [42]、MobileNet [13]和ShuffleNet [52]集成的变体。我们在表1中描述了SE-ResNet-50和SE-ResNeXt-50的架构。
+![image](https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/b22aba76-78a0-46fa-bc88-35ae15741520)
+(表1：（左）ResNet-50，（中）SE-ResNet-50，（右）使用32×4d模板的SE-ResNeXt-50。在括号内列出了残差模块的形状和具有特定参数设置的操作，并且一个阶段中堆叠的块的数量显示在外部。在fc后面的内部括号表示SE模块中两个全连接层的输出维度)
 
 <a id="4.模型和计算复杂度ModelandComputationalComplexity"></a>
 ## 4.模型和计算复杂度 Model and Computational Complexity
