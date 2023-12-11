@@ -13,7 +13,7 @@
 ## 相关链接
 参考博文链接：  
 参考视频链接：  
-源码链接：  
+源码链接：  https://github.com/Raschka-research-group/coral-cnn
 论文链接：  https://arxiv.org/pdf/1901.07884v7.pdf
 
 <a id="0.摘要Abstract"></a>
