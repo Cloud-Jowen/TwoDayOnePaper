@@ -78,9 +78,9 @@ $`(  C_{y,r_{k+1}} - C_{y,r_k} \ge   C_{y,r_k}  - C_{y,r_{k-1}})`$），以获�
 
 <a id="3.2.1标签扩展和排名预测"></a>
 ### 3.2.1 标签扩展和排名预测 Label extension and rank prediction
-给定一个训练数据集$`D = \left \{ x_i,y_i \right \}_{i=1}^N `$，一个排名$`y_i`$ 首先被扩展成 K − 1 个二元标签$`y_i^{(1)},...,y_i^{(K-1)}`$ ，使得$`y_i^{(k)}\in \left \{ 0,1 \right \} `$  表示 $`y_i`$ 是否超过排名 $`r_k`$，例如，$`y_i^{(k)} = \mathbb{1}\left \{ y_i,r_k \right \}`$。这里的指示函数 $`\mathbb{1}\left \{ \cdot  \right \}`$ 在内部条件为真时取值为1，否则为0。在模型训练过程中使用扩展的二元标签，我们在输出层训练了一个具有 K − 1 个二元分类器的单个CNN模型，如图2所示。
+给定一个训练数据集$`D = \left \{ x_i,y_i \right \}_{i=1}^N `$，一个排名$`y_i`$ 首先被扩展成 K − 1 个二元标签$`y_i^{(1)},...,y_i^{(K-1)}`$ ，使得$`y_i^{(k)}\in \left \{ 0,1 \right \} `$  表示 $`y_i`$ 是否超过排名 $`r_k`$，例如，$`y_i^{(k)} = \mathbb{1}\left \{ y_i,r_k \right \}`$。这里的指示函数 $`\mathbb{1}\left \{ \cdot  \right \}`$ 在内部条件为真时取值为1，否则为0。在模型训练过程中使用扩展的二元标签，我们在输出层训练了一个具有 K − 1 个二元分类器的单个CNN模型，如图2所示。（Jowen：也就是训练了 k-1 个分类头，或者说全连接层）
 
-<img width="1144" alt="image" src="https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/259dc2ee-8230-4827-a774-f4fa85bc87b9">。
+<img width="1144" alt="image" src="https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/259dc2ee-8230-4827-a774-f4fa85bc87b9">  
 （图2：一致排名logits卷积神经网络（CORAL-CNN）用于年龄预测的示意图。通过估计的概率值，使用公式5得到二元标签，然后通过公式1将其转换为年龄标签。）
 
 根据二元任务的响应，对于输入 $`x_i`$ ，通过 $`h(xi) = rq`$ 得到预测的排名标签。排名索引$`q`$由以下公式给出$`q = 1 + {\textstyle \sum_{k=1}^{K-1}}f_k(x_i) `$其中 $`f_k(x_i) \in \left \{ 0,1 \right \} `$ 是输出层第 k 个二元分类器的预测值。我们要求$` \left \{ f_k \right \}_{k=1}^{K-1} `$反映序数信息并且是排名单调的，即 $`f_1(x_i)\ge f_2(x_i)\ge ...\ge f_{K-1}(x_i)`$，这保证了一致的预测结果。为了实现排名单调性并确保二元分类器的一致性（定理1），K − 1 个二元任务共享相同的权重参数，但具有独立的偏置单元（图2）。
