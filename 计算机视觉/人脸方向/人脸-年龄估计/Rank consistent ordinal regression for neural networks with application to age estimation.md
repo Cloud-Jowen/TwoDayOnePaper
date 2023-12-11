@@ -166,6 +166,17 @@ CACD数据集（Chen等人，2014）从 http://bcsiriuschen.github.io/CARC/ 下�
 
 <a id="4.3训练和验证细节"></a>
 ### 4.3 训练和验证细节 Training and evaluation
+为了对模型进行评估和比较，我们在最后一个训练时期后，在测试集上计算了平均绝对误差（MAE）和均方根误差（RMSE），
+```math
+MAE = \frac{1}{N}\sum_{i=1}^{N}\left |  y_i-h(x_i)\right |   
+RMSE = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(y_i-h(x_i))^{2} } 
+
+```
+
+
+分别表示第i个测试示例的真实排名yi和预测排名h(xi)之间的误差。
+
+
 
 <a id="4.4软硬件信息"></a>
 ### 4.4 软硬件信息 Hardware and software
