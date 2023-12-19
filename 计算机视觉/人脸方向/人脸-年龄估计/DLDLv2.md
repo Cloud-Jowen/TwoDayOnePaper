@@ -238,9 +238,11 @@ MAE = \frac{1}{N} {\textstyle \sum_{n=1}^{N}}  \left | \hat{y}^n - y^n \right |
 
 我们还按照[21, 13]的方法计算均方根误差（RMSE）和皮尔逊相关系数（PC），计算公式如下：
 ```math
-RMSE = \sqrt{\frac{1}{N}\sum_{n=1}^{N}\left | \hat{y}^n - y^n \right |^2   } 
+RMSE = \sqrt{\frac{1}{N}{\textstyle\sum_{n=1}^{N}\left | \hat{y}^n - y^n \right |^2   }} 
 PC = \frac{\sum_{n=1}^{N}\left ( y^n - \\bar{y}  \right )\left ( \hat{y}^n - \\bar{\hat{y}^n} \right )   }{\sqrt{\sum_{n=1}^{N} \left ( y^n - \\bar{y}  \right )^2}\sqrt{\sum_{n=1}^{N}\left ( \hat{y}^n - \\bar{\hat{y}^n} \right )^2}  } 
 ```
+
+在这里，y和ŷ分别是所有测试图像上的真实分数和预测分数的平均值。这两个评估指标仅用于评估面部吸引力估计的性能。
 
 <a id="5.结论Conclusion"></a>
 ## 5.结论 Conclusion
