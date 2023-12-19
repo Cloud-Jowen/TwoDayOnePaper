@@ -200,7 +200,7 @@ i.e.,   \frac{\partial L}{\partial x} = \left ( \hat{p}-p \right ) + \lambda sig
 ### 3.4 网络架构 Network Architecture
 考虑到模型的大小和效率，我们对VGG-16进行了以下四个方面的修改。VGG-16包含13个卷积(Conv)层，五个最大池化(Max-Pooling)层和三个全连接(FC)层，每个Conv层和FC层后面都跟着一个ReLU层。
 
-首先，我们观察到三个FC层大约包含整个模型90%的参数。我们移除了所有的FC层，并添加了一个混合池化(Hybrid-Pooling)层，该层由一个MP层和一个全局平均池化(GAP)层构成。我们发现HP策略比单独使用GAP更有效。
+首先，我们观察到三个FC层大约包含整个模型90%的参数。我们移除了所有的FC层，并添加了一个混合池化(Hybrid-Pooling)层，该层由一个最大池化层和一个全局平均池化(GAP)层构成。我们发现HP策略比单独使用GAP更有效。
 
 其次，为了进一步减小模型大小，我们减少了每个Conv层中的滤波器数量，使其变得更加瘦削。
 
