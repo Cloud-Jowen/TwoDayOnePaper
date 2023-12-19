@@ -188,7 +188,7 @@ i.e.,   \frac{\partial L}{\partial x} = \left ( \hat{p}-p \right ) + \lambda sig
 
 再次应用链式法则，我们可以轻松地得到关于W、b和θ的L的导数，如下所示：
 ```math
-\frac{\partial L}{\partial W} = \frac{\partial L}{\partial x}f, \frac{\partial L}{\partial b} =\frac{\partial L}{\partial x},\frac{\partial L}{\part
+\frac{\partial L}{\partial W} = \frac{\partial L}{\partial x}f, \frac{\partial L}{\partial b} =\frac{\partial L}{\partial x},\frac{\partial L}{\partial \theta } = \frac{\partial L}{\partial x}W^T\frac{\partial F}{\partial \theta }
 ```
 
 一旦学习到W、b和θ，任何新实例x的预测值yˆ可以通过在前向网络计算中使用方程（10）来生成。
