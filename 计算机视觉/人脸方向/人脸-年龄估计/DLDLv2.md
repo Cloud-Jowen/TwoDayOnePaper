@@ -111,12 +111,89 @@ p^{rank}\approx 1 - c_k
 ```
 
 
-因此，$`pT{rank}`$ 是标签分布学习的一个特例，其中分布是随着 $`σ→0`$ 逐渐累积的。也就是说，Ranking本质上是学习一个累积分布函数(c.d.f.)，而DLDL旨在学习一个概率密度函数(p.d.f.)。更一般地，我们有 $`c = Tp^{ld}`$，其中 $`T`$ 是一个转换矩阵，对于所有的 $`i≤j`$ ，$`T_{ij}=1`$，当 $`i > j`$ 时，$`T_{ij}=0`$。将（5）代入（4），我们有 $`p^{rank}\approx 1 - Tp^{ld}`$（6）
+因此，$`pT{rank}`$ 是标签分布学习的一个特例，其中分布是随着 $`σ→0`$ 逐渐累积的。也就是说，Ranking本质上是学习一个累积分布函数(c.d.f.)，而DLDL旨在学习一个概率密度函数(p.d.f.)。更一般地，我们有 $`c = Tp^{ld}`$，其中 $`T`$ 是一个转换矩阵，对于所有的 $`i≤j`$ ，$`T_{ij}=1`$，当 $`i > j`$ 时，$`T_{ij}=0`$。我们有 
+```math
+p^{rank}\approx 1 - Tp^{ld}
+```
 
 因此，Ranking编码和标签分布之间存在线性关系。标签分布编码 $`p^{ld}`$ 可以用不同的σ表示更有意义的年龄/吸引力信息，而Ranking编码 $`p^{rank}`$ 则不能。此外，DLDL更高效，因为只需要训练一个网络。
 
 然而，正如之前讨论的，所有这些方法都可能不是最优的，因为训练目标与评估指标之间存在不一致。
 
+<a id="3.3联合学习框架"></a>
+### 3.3 联合学习框架 Joint Learning Framework
+为了同时学习标签分布并输出期望值，在本节中我们提出了DLDL-v2框架。
+<a id="3.3.1标签分布学习模块"></a> $``$
+### 3.3.1 标签分布学习模块 Joint Learning Framework
+为了利用标签分布学习的良好性质，我们将其集成到我们的框架中，形成一个标签分布学习模块。如图3所示，该模块包括一个全连接层、一个softmax层和一个损失层。该模块遵循[8]中的DLDL方法。
+具体而言，给定输入图像x和相应的标签分布p，我们假设 $`f = F\left ( x;\theta  \right ) `$ 是CNN最后一层的激活，其中 $`\theta`$ 表示CNN的参数。一个全连接层通过以下方式将f转换为$`x \in R^K`$
+```math
+x = W^{T}f+b
+```
+
+然后，我们使用softmax函数将x转化为一个概率分布，即，
+```math
+\hat{p}_k = \frac{exp\left ( x_k \right ) }{ {\textstyle \sum_{t}^{}exp(x_t)} } 
+```
+
+在给定输入图像的情况下，标签分布学习模块的目标是找到参数θ、W和b，以生成与真实标签分布p相似的$`\hat{p}`$。
+
+我们采用库尔巴克-莱布勒散度(KL散度)作为衡量真实标签分布和预测分布之间不相似性的度量。因此，我们可以定义一个训练样本的损失函数如下:
+```math
+L_{ld} = \sum_{k}^{}p_kln\frac{p_k}{\hat(p_k)}
+```
+
+<a id="3.3.2期望回归模块"></a> $``$
+### 3.3.2 期望回归模块 The Expectation Regression Module
+需要注意的是，标签分布学习模块只能学习一个标签分布，而不能回归一个精确的值。为了减少训练和评估阶段之间的不一致性，我们提出了一个期望回归模块，进一步调整预测值。如图3所示，该模块包括一个期望层和一个损失层。
+
+期望层将预测分布和标签集作为输入，并输出其期望值。
+```math
+\hat{y} = \sum_{k}^{} \hat{p_k}l_k
+```
+
+其中pˆk表示输入图像属于标签lk的预测概率。给定一个输入图像，期望回归模块最小化期望值 $`\hat{y}`$ 和真实值 $`y`$ 之间的误差。我们使用l1损失作为误差度量，如下所示：
+```math
+L_{er} = \left | \hat{y}-y \right | 
+```
+其中 $`|·|`$ 表示绝对值。需要注意的是，该模块不引入任何新的参数。
+
+<a id="3.3.3学习"></a> $``$
+### 3.3.3 学习 Learning
+给定一个训练数据集D，我们框架的学习目标是通过联合学习标签分布和期望回归来找到参数θ、W和b。因此，我们的最终损失函数是标签分布损失 $`L_{ld}`$ 和期望回归损失 $`L_{er}`$ 的加权组合：
+```math
+L = L_{ld} + L_{er}
+```
+其中λ是权重，用于平衡两个损失的重要性。把两个损失带入得到：
+```math
+L = -\sum_{k}^{}p_kln\hat{p}_k + \lambda\left |  {\textstyle \sum_{k}^{}\hat{p}_k}l_k - y  \right | 
+```
+
+我们采用随机梯度下降法来优化我们模型的参数。关于 $`\hat{p}_k`$ 的导数可以表示为：
+```math
+\frac{\partial L}{\partial \hat{p}_k} = \frac{p_k}{\hat{p}_k} + \lambda l_k sign\left ( \hat{y}-y \right )
+```
+
+对于任意的k和j，softmax函数（方程（8））的导数是众所周知的，如下所示：
+```math
+\frac{\partial \hat{p}_k}{\partial x_j} = \hat{p}_k\left (  \delta_\left ( k=j \right )  -\hat{p}_j\right  )
+```
+
+δ(k = j) 是当 k = j 时为 1，否则为 0。根据链式法则，我们有
+```math
+\frac{\partial L}{\partial x_j} = \left ( \hat{p}_j-p_j \right ) + \lambda sign\left ( \hat{y}-y \right )\hat{p_j}\l
+i.e.,   \frac{\partial L}{\partial x} = \left ( \hat{p}-p \right ) + \lambda sign\left ( \hat{y}-y \right ) \hat{p_j}\
+```
+
+再次应用链式法则，我们可以轻松地得到关于W、b和θ的L的导数，如下所示：
+```math
+\frac{\partial L}{\partial W} = \frac{\partial L}{\partial x}f, \frac{\partial L}{\partial b} =\frac{\partial L}{\partial x},\frac{\partial L}{\part
+```
+
+一旦学习到W、b和θ，任何新实例x的预测值yˆ可以通过在前向网络计算中使用方程（10）来生成。
+```math
+\hat{y} = \sum_{k}^{} \hat{p_k}l_k
+```
 
 <a id="3.4网络架构"></a>
 ### 3.4 网络架构 Network Architecture
