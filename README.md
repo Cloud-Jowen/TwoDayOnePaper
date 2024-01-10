@@ -3,5 +3,5 @@
 更新频率为 2篇/周，经典论文不算在内
 
 近期待更新论文：
-- [ ] DETR
-- [ ] CLIP
+- [ ] Adversarial Training (AT)
+- [ ] Virtual Adversarial Training (VAT)
