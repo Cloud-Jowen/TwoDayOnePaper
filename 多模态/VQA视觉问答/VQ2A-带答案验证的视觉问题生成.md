@@ -1,4 +1,4 @@
-![image](https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/bd184a5f-d69a-47e6-a495-7b48845f5f70)![image](https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/e4967a75-0cb3-4cb1-8b60-a8b97fd4a018)# All You May Need for VQA are Image Captions
+# All You May Need for VQA are Image Captions
 
 [**相关链接**](#相关链接)  
 [**0.摘要 Abstract**](#0.摘要Abstract)  
