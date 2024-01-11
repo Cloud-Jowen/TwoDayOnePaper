@@ -105,7 +105,8 @@
 
 由于神经文本生成技术的进步，包括像T5（Raffel等人，2020年）这样的模型，我们选择使用神经生成模型作为QG。具体来说，我们使用T5-XXL模型并在SQuAD1.1（Rajpurkar等人，2016年）上对其进行微调以进行问题生成。对于每个标题-答案输入，我们选取最高得分的生成问题。我们注意到我们的QG模型是在一个问答数据集上训练的，而不是针对标题输入优化的，因此并不是专门为标题输入而设计的。从数百个生成问题的人工检查来看，我们的QG模型对标题输入表现良好；详见表格2和第3.5节。
 
-<img width="605" alt="image" src="https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/3ab73a9a-86eb-4c7a-8991-96234477e237">     
+<img width="605" alt="image" src="https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/3ab73a9a-86eb-4c7a-8991-96234477e237">  
+
 (表2：来自句子“两只熊在冰上躺下”的问题/答案对以及过滤决策。对于候选答案‘零’，没有进行验证。)
 
 <a id="3.3问答过滤"></a>
@@ -126,7 +127,8 @@
 
 表3显示了生成的数据集的大小，分别称为VQ2A-COCO和VQ2A-CC3M，以及我们在实验中使用的视觉问答数据集。
 
-<img width="289" alt="image" src="https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/6a1cab30-dfc3-4a42-898d-81f534522996">    
+<img width="289" alt="image" src="https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/6a1cab30-dfc3-4a42-898d-81f534522996">
+
 表3：我们生成的VQ2A数据（前两行）和我们在实验中使用的VQA数据集的大小。
 
 <a id="3.5质量分析"></a>
