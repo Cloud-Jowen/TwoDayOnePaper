@@ -138,7 +138,8 @@
 
 图 3 显示了在 VQ2A 数据集中生成的问题的多样性。可以看到，由 VQ2A 生成的大量用于共享的 VQA2.0/COCO 图像在 VQA2.0 中并未出现。附加分析和示例请参见附录 A。
 
-<img width="818" alt="image" src="https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/4a855a5d-fdaf-451e-a40e-8afaac69cdd5">   
+<img width="818" alt="image" src="https://github.com/Cloud-Jowen/Paper_Note/assets/56760687/4a855a5d-fdaf-451e-a40e-8afaac69cdd5">
+
 （图3：来自VQ2A-COCO（上）和VQ2A-CC3M（下）的示例。带有绿色背景的问题也出现在VQA2.0中。）
 
 <a id="4.VisualQuestionAnswering(VQA)"></a>
