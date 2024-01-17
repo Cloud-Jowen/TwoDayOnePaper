@@ -1,4 +1,4 @@
-# 网络名称（此处应替换为具体的网络名称）
+# 网络名称（此处应替换为具体的网络名称）https://blog.csdn.net/c9yv2cf9i06k2a9e/article/details/116111814
 
 [**相关链接**](#相关链接)  
 [**0.摘要 Abstract**](#0.摘要Abstract)  
@@ -14,7 +14,7 @@
 参考博文链接：  
 参考视频链接：  
 源码链接：  
-论文链接：  
+论文链接：  https://arxiv.org/pdf/1705.00106.pdf
 
 <a id="0.摘要Abstract"></a>
 ## 0.摘要 Abstract
