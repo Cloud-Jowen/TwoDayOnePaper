@@ -82,18 +82,18 @@ Heilman 和 Smith (2010) 提出了一个“生成并排序”的方法：他们�
 
 ### 4.1 解码 Decoder
 
-与Sutskever等人(2014年)和Chopra等人(2016年)类似，我们将方程1中的条件因子分解为词级预测的乘积：
+与Sutskever等人(2014年)和Chopra等人(2016年)类似，我们将方程1中的条件因子分解为词级预测的乘积：  
 
 ```math
-P(y|x) = \prod_{t=1}^{\left | y \right | }P(y_t|x,y<t)
+123
 ```
-
 其中，每个yt的概率基于所有先前生成的单词（即y<t）以及输入句子x来预测。
 
 更具体的说：
 ```math
-P(y_t|x,y<t) = softmax(W_stanh(W_t[h_t;c_t]))
+P(y_t|x,y<t) = softmax(W_{s}tanh(W_t[h_t;c_t]))
 ```
+
 
 其中，w 是时间步长 t 的递归神经网络状态变量，c 是在解码时间步长 t（见第 4.2 节）对 x 进行注意力编码的结果。W_s 和 W_t 是要学习的参数。
 
