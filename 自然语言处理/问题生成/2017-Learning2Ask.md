@@ -1,12 +1,15 @@
-# 网络名称（此处应替换为具体的网络名称）https://blog.csdn.net/c9yv2cf9i06k2a9e/article/details/116111814
+# Learning to Ask: Neural Question Generation for Reading Comprehension
 
 [**相关链接**](#相关链接)  
 [**0.摘要 Abstract**](#0.摘要Abstract)  
 [**1.介绍 Introduction**](#1.介绍Introduction)  
 [**2.相关工作 Related work**](#2.相关工作Relatedwork)  
-[**3.网络结构**](#3.网络结构)  
-[**4.实验 Experiments**](#4.实验Experiments)  
-[**5.结论 Conclusion**](#5.结论Conclusion)  
+[**3.任务定义 Task Deﬁnition**](#3.任务定义TaskDeﬁnition)  
+[**4.模型 Model**](#4.模型Model)  
+  [**4.1 解码 Decoder**](#4.模型Model)  
+  [**4.2 编码 Encoder**](#4.模型Model)  
+  [**4.3 训练和推理 Training and Inference**](#4.模型Model)  
+[**5.实验设置 Experimental Setup**](#5.结论Conclusion)  
 
 
 
