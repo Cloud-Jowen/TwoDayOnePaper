@@ -1,7 +1,8 @@
-# CVPaper_Note
+# TwoDayOnePaper
 阅读 paper 的笔记
-更新频率为 2篇/周，经典论文不算在内
+更新频率为 1篇/2日
 
-近期待更新论文：
-- [ ] Adversarial Training (AT)
-- [ ] Virtual Adversarial Training (VAT)
+近期计划：
+- [ ] Two-Stage Synthesis Networks for Transfer Learning in Machine Comprehension
+- [ ] 检查 Virtual Adversarial Training (VAT)
+- [ ] 
