@@ -72,6 +72,18 @@
 <a id="5.结论Conclusion"></a>
 ## 5.结论 Conclusion
 
+<a id="6.实验结果ExperimentalResults"></a>
+## 6.实验结果 Experimental Results
+
+我们在新闻问答测试集上报告主要结果（表2），在SQuAD上报告简要结果（表3），进行消融研究（表4）并进行错误分析
+
+<a id="6.1结果"></a>
+### 6.1 结果 Results
+
+我们比较了之前发表的最佳工作，该工作训练了BARB（Tirschler等人，2016年）和Match-LSTM（Wang和Jiang，2016年）架构以及我们在NewsQA上训练的BIDAF模型。直接在NewsQA上应用在SQuAD上训练的BIDAF模型会导致性能不佳，F1度量值为39.0％，比在标注的NewsQA数据上训练的模型低13.2％。使用两阶段SynNet已经可以略微提高性能（F1度量值为40.9％），这表明通过问题-答案对向模型提供新领域的信号对于训练很重要。使用检查点平均化，我们可以看到额外提高了3.4％（F1度量值为44.3％）。当我们融合了一个在SynNet上的BIDAF模型，其表现更好。
+
+我们还评估了SynNet在NewsQA-to-SQuAD方向上。 我们直接从另一个方向应用最佳设置，并在表3中报告结果。 SynNet比基线模型在EM上提高了1.6%，F1提高了0.7%。 由于篇幅有限，我们在这一方向上省略了消融研究。
+
 <a id="6.3.1答案合成"></a>
 ### 6.3.1 答案合成 Answer Synthesis
 
