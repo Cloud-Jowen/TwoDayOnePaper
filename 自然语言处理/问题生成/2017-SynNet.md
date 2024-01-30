@@ -14,8 +14,8 @@
 ## 相关链接
 参考博文链接：  
 参考视频链接：  
-源码链接：  https://github.com/davidgolub/QuestionGeneration
-论文链接：  https://arxiv.org/pdf/1706.09789.pdf
+源码链接：  https://github.com/davidgolub/QuestionGeneration  
+论文链接：  https://arxiv.org/pdf/1706.09789.pdf  
 
 <a id="0.摘要Abstract"></a>
 ## 0.摘要 Abstract
@@ -59,12 +59,11 @@
 
 迁移学习（Pan 和 Yang，2010）已经成功地应用于机器学习的许多领域，如机器翻译（Zoph 等人，2016）、计算机视觉（Sharif Razavian 等人，2014）和语音识别（Doulaty 等人，2015）。具体来说，在大规模图像分类挑战赛（Russakovsky 等人，2015）上训练的对象识别模型被证明是各种任务（例如图像字幕生成（Lu 等人，2016；Fang 等人，2015；Karpathy 和 Fei-Fei，2015）和视觉问答（Zhou 等人，2015；Xu 和 Saenko，2016；Fukui 等人，2016；Yang 等人，2016）等）的出色特征提取器。类似地，我们使用在SQuAD数据集上预先训练的模型作为通用特征提取器来启动NewsQA上的QA系统。
 
-<a id="3.网络结构"></a>
-## 3.网络结构
+<a id="3.机器理解的迁移学习任务TheTransferLearningTaskforMC"></a>
+## 3 机器理解的迁移学习任务 The Transfer Learning Task for MC
 
-<a id="3.1"></a>
-### 3.1
 
+我们用下面的公式形式化机器理解的任务。我们的MC模型输入一个标记化的问句  `$q = \left \{ q_0,q_1,...,q_n \right \} $`, 一段上下文段落 `$p = \left \{ p_0,p_1,...,p_n \right \} $`, 其中`$q_i$`和`$p_i$`分别是单词，学习函数`$f(p,q) -> \left \{ a_{start},a_{end} \right \} $` ，其中`$a_{start}$`和`$a_{end}$`是段落p中的指针索引，即答案`$a = p_{a_{start}},p_{a_{end}}$`
 
 <a id="4.实验Experiments"></a>
 ## 4.实验 Experiments
