@@ -63,7 +63,7 @@
 ## 3 机器理解的迁移学习任务 The Transfer Learning Task for MC
 
 
-我们用下面的公式形式化机器理解的任务。我们的MC模型输入一个标记化的问句  `$q = \left \{ q_0,q_1,...,q_n \right \} $`, 一段上下文段落 `$p = \left \{ p_0,p_1,...,p_n \right \} $`, 其中`$q_i$`和`$p_i$`分别是单词，学习函数`$f(p,q) -> \left \{ a_{start},a_{end} \right \} $` ，其中`$a_{start}$`和`$a_{end}$`是段落p中的指针索引，即答案`$a = p_{a_{start}},p_{a_{end}}$`
+我们用下面的公式形式化机器理解的任务。我们的MC模型输入一个标记化的问句  $q = \left \{ q_0,q_1,...,q_n \right \} $, 一段上下文段落 $p = \left \{ p_0,p_1,...,p_n \right \} $, 其中$q_i$和$p_i$分别是单词，学习函数$f(p,q) -> \left \{ a_{start},a_{end} \right \} $ ，其中$a_{start}$和$a_{end}$是段落p中的指针索引，即答案$a = p_{a_{start}},p_{a_{end}}$
 
 <a id="4.实验Experiments"></a>
 ## 4.实验 Experiments
