@@ -28,7 +28,8 @@
 把上述链接的权重全部下载好  
 替换 ./GroundingDINO/groundingdino/util/inference.py 的 line80 为  
 
-```python 
+```python
+from transformers import AutoTokenizer, AutoModelForMaskedLM # 在开头添加
 tokenizer = AutoTokenizer.from_pretrained("./GroundingDINO/bert-base-chinese")
 ```
 
