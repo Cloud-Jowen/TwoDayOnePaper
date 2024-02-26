@@ -24,9 +24,10 @@
 
 ❌OSError: We couldn't connect to 'https://huggingface.co' to load this file, couldn't find it in the cached files and it looks like bert-base-uncased is not the path to a directory containing a file named config.json.
 
-✅解决办法：去 huggingface 上下载对应的 tokenizer 权重 https://huggingface.co/google-bert/bert-base-chinese
-把上述链接的权重全部下载好
-替换 ./GroundingDINO/groundingdino/util/inference.py 的 line80 为
+✅解决办法：去 huggingface 上下载对应的 tokenizer 权重 https://huggingface.co/google-bert/bert-base-chinese  
+把上述链接的权重全部下载好  
+替换 ./GroundingDINO/groundingdino/util/inference.py 的 line80 为  
+
 '''python 
 tokenizer = AutoTokenizer.from_pretrained("./GroundingDINO/bert-base-chinese")
 '''
