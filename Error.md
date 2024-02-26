@@ -45,4 +45,9 @@ text_encoder_type = "./GroundingDINO/bert-base-chinese"
 ✅解决办法： 修改 ./GroundingDINO/groundingdino/util/get_tokenlizer.py 的 line 25 为  
 ```python
 return BertModel.from_pretrained(text_encoder_type,ignore_mismatched_sizes=True)
+```  
+
+修改 ./GroundingDINO/bert-base-chinese/config.json 的 line 24 为  
+```python
+"vocab_size": 30522 ,
 ```
