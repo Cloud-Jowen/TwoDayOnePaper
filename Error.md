@@ -28,8 +28,8 @@
 把上述链接的权重全部下载好  
 替换 ./GroundingDINO/groundingdino/util/inference.py 的 line80 为  
 
-'''python 
+‘’‘python 
 tokenizer = AutoTokenizer.from_pretrained("./GroundingDINO/bert-base-chinese")
-'''
+’‘’
 
 参考链接：
