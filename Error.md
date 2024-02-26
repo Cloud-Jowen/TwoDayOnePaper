@@ -42,7 +42,7 @@ text_encoder_type = "./GroundingDINO/bert-base-chinese"
 ❌RuntimeError: Error(s) in loading state_dict for GroundingDINO:
         size mismatch for bert.embeddings.word_embeddings.weight: copying a param with shape torch.Size([30522, 768]) from checkpoint, the shape in current model is torch.Size([21128, 768]).
 
-✅解决办法： 修改 ./GroundingDINO/bert-base-chinese/config.json 的 line 24:
+✅解决办法： 修改 ./GroundingDINO/groundingdino/util/get_tokenlizer.py 的 line 25 为  
 ```python
-"vocab_size": 30522
+return BertModel.from_pretrained(text_encoder_type,ignore_mismatched_sizes=True)
 ```
