@@ -22,6 +22,8 @@
 
 ## 4. GroundingDINO 的 tokenizer 
 
+✅提示：请严格按照官网教程进行安装，出现 _C 问题请检查安装步骤
+
 ❌OSError: We couldn't connect to 'https://huggingface.co' to load this file, couldn't find it in the cached files and it looks like bert-base-uncased is not the path to a directory containing a file named config.json.
 
 ✅解决办法：去 huggingface 上下载对应的 tokenizer 权重 https://huggingface.co/google-bert/bert-base-chinese  
@@ -51,3 +53,5 @@ return BertModel.from_pretrained(text_encoder_type,ignore_mismatched_sizes=True)
 ```python
 "vocab_size": 30522 ,
 ```
+
+
