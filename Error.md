@@ -33,4 +33,16 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM # 在开头添加
 tokenizer = AutoTokenizer.from_pretrained("./GroundingDINO/bert-base-chinese")
 ```
 
-参考链接：
+并替换 './GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py' 的 line 34  
+```python
+text_encoder_type = "./GroundingDINO/bert-base-chinese"
+```
+
+
+❌RuntimeError: Error(s) in loading state_dict for GroundingDINO:
+        size mismatch for bert.embeddings.word_embeddings.weight: copying a param with shape torch.Size([30522, 768]) from checkpoint, the shape in current model is torch.Size([21128, 768]).
+
+✅解决办法： 修改 ./GroundingDINO/bert-base-chinese/config.json 的 line 24:
+```python
+"vocab_size": 30522
+```
