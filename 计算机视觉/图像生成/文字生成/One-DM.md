@@ -89,7 +89,31 @@ L_{lapNCE} = - \frac{1}{N}\sum_{i \in M}^{}\frac{1}{\left |  P(i)\right | }\sum_
 ```
 具体来说，$`i \in M = \left \{ 1...N \right \} `$ 是mini-batch中大小为 N 的任何元素的索引，$`A(i) = M \setminus \left \{ i \right \}  `$是与 i 不同的其他索引。Z<sub>i</sub> 是一个属于作者 w<sub>i</sub> 的锚样本，并且$`P\left ( i \right ) = \left \{ p \in A(i):w_p =w_i \right \}`$是它的内批正样本集，而$`A(i) \setminus P(i)`$是它的负样本集。这里，$`z = Proj\left ( F_{fre} \right )`$ ，其中 Proj 是一个可学习的多层感知机（MLP），τ 是一个标量温度参数，·表示内积符号。 
 
-**门机制** 如图2所示，参考图像中字符的冲程区域通常稀疏，并且背景噪声会干扰特征提取。为了应对这一挑战，我们提出了一种门机制来选择性地过滤样本信息 I<sub>s</sub> ，如图3所示。具体来说，提取出的样本风格特征 F<sub>spa</sub> 被输入到一个门层中，该层由可学习的全连接层和随后的Sigmoid激活组成，以获得相应的门单元 $`W = \left \{ w_i \right \}_{i=1}^d \in R^d `$。每个单元 w<sub>i</sub> 决定了对应 $`f_{spa}^i`$ 的通过率，在 w<sub>i</sub> 较大的情况下允许更高的通过率。这种设计有效地实现了在抑制多余背景噪声的同时提取出具有信息性的风格特征$`\hat{F}_{spa} = \left \{ \hat{f}_{spa}^i \right \}_{i=1}^d`$，其中 $`\hat{f}_{spa}^i = f_{spa}^i · w_i`$。 
+**门机制** 如图2所示，参考图像中字符的冲程区域通常稀疏，并且背景噪声会干扰特征提取。为了应对这一挑战，我们提出了一种门机制来选择性地过滤样本信息 I<sub>s</sub> ，如图3所示。具体来说，提取出的样本风格特征 F<sub>spa</sub> 被输入到一个门层中，该层由可学习的全连接层和随后的Sigmoid激活组成，以获得相应的门单元 $`W = \left \{ w_i \right \}_{i=1}^d \in R^d `$。每个单元 w<sub>i</sub> 决定了对应 $`f_{spa}^i`$ 的通过率，在 w<sub>i</sub> 较大的情况下允许更高的通过率。这种设计有效地实现了在抑制多余背景噪声的同时提取出具有信息性的风格特征$`\hat{F}_{spa} = \left \{ \hat{f}_{spa}^i \right \}_{i=1}^{d}`$，其中 $`\hat{f}_{spa}^i = f_{spa}^i · w_i`$。 
+
+<a id="3.3风格内容融合模块Style-contentFusionModule"></a>
+### 3.3 风格内容融合模块 Style-content Fusion Module
+在获得文本内容特征 E 和两个风格特征 $`\hat{f}_{spa}`$ 、F<sub>fre</sub> 后，我们整合所有特征到两个多头注意力机制中以引导扩散模型的去噪生成过程，如图3所示。具体来说，第一个交叉注意力模块使用文本内容E作为查询来识别样式参考中最相关的样式信息，并由此推断每个字符对应的样式属性。例如，如果文本内容是'a'，它优先搜索样式参考中的'a', 'b', 'd', 'g'等字符的相关样式特征，因为这些字符出现相似的循环结构，暗示着更多的可比样式属性。这个过程（图3中的交叉注意力）表示为： 
+```math
+O = Atten_1\left ( Q_1 = E,K_1=V_1=\hat{f}_{spa}+F_{fre} \right )
+```
+随后，我们通过简单地将O和E相加来获取内容和样式指导之间的初始融合嵌入。合并后的中间向量被用作自我关注机制中的查询、键和值，以促进信息的全面交互。最后，混合嵌入g作为扩散过程的条件。第二个多头注意力（图3中的自注意力）定义如下：
+```math
+g = Atten_2\left ( Q_2 = K_2 = V_2 = O + E \right )
+```
+
+<a id="3.4条件扩散模型ConditionalDiffusionModel"></a>
+### 3.4 条件扩散模型 Conditional Diffusion Model
+条件扩散模型 p<sub>θ</sub> 的目标是生成由获得的条件 g 引导的手写文本的真实图像。具体来说，如图3所示，在g的指导下，pθ执行一个去噪生成过程，从采样的高斯噪声xT开始，逐步去噪以获取所需的手写文本x0： 
+```math
+p_\theta \left ( x_0|g \right ) = \int p_\theta \left ( x_{0:T}|g \right )d_{x_1:T}, 
+```
+```math
+p_\theta \left ( x_{0:T}|g \right )d_{x_1:T} = p(x_T)\prod_{t=1}^{T}p_\theta(x_{t-1}|xt,g),
+```
+```math
+p_\theta(x_{t-1}|xt,g) = \mathcal{N}(x_{t-1};\mu_\theta(x_t,g,t),\sum_\theta(x_t,g,t)) 
+```
 
 <a id="4.实验Experiments"></a>
 ## 4.实验 Experiments
