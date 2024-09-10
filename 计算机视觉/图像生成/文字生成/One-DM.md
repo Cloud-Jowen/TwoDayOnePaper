@@ -85,9 +85,9 @@ L = L_{lapNCE} + L_{rec}
 
 **Laplacian对比学习** 本文提出的 L<sub>lapNCE</sub> 的目标是引导高频风格编码器 E<sub>fre</sub> 从高频信息中学习更具有区分性的风格特征，因此我们提出将提取的属于同一作者的风格特征 E<sub>fre</sub> 拉近，而将来自不同作者的风格特征 E<sub>fre</sub> 拉开距离。我们将我们的 L<sub>lapNCE</sub> 表示如下：
 ```math
-L_{lapNCE} = - \frac{1}{N}\sum_{i \in M}^{}\frac{1}{\left |  P(i)\right | }\sum_{p \in P(i)}^{} log \frac{exp\left ( z_i \times z_p  / \tau \right ) }{ {\textstyle \sum_{a \in A(i)}^{}exp\left ( z_i \times z_p  / \tau \right )} }
+L_{lapNCE} = - \frac{1}{N}\sum_{i \in M}^{}\frac{1}{\left |  P(i)\right | }\sum_{p \in P(i)}^{} log \frac{exp\left ( z_i · z_p  / \tau \right ) }{ {\textstyle \sum_{a \in A(i)}^{}exp\left ( z_i · z_p  / \tau \right )} }  
 ```
-
+具体来说，$`i \in M = \left \{ 1...N \right \} `$ 是mini-batch中大小为 N 的任何元素的索引，$`A(i) = M \setminus \left \{ i \right \}  `$是与 i 不同的其他索引。Z<sub>i</sub> 是一个属于作者 w<sub>i</sub> 的锚样本，并且$`P\left ( i \right ) = \left \{ p \in A(i):w_p =w_i \right \}`$是它的内批正样本集，而$`A(i) \setminus P(i)`$是它的负样本集。这里，$`z = Proj\left ( F_{fre} \right )`$ ，其中 Proj 是一个可学习的多层感知机（MLP），τ 是一个标量温度参数，·表示内积符号。 
 <a id="4.实验Experiments"></a>
 ## 4.实验 Experiments
 
