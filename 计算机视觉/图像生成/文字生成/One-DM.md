@@ -89,7 +89,7 @@ L_{lapNCE} = - \frac{1}{N}\sum_{i \in M}^{}\frac{1}{\left |  P(i)\right | }\sum_
 ```
 具体来说，$`i \in M = \left \{ 1...N \right \} `$ 是mini-batch中大小为 N 的任何元素的索引，$`A(i) = M `$ \ $`\left \{ i \right \}`$是与 i 不同的其他索引。Z<sub>i</sub> 是一个属于作者 w<sub>i</sub> 的锚样本，并且$`P\left ( i \right ) = \left \{ p \in A(i):w_p =w_i \right \}`$是它的内批正样本集，而$`A(i)`$ \ $`P(i)`$是它的负样本集。这里，$`z = Proj\left ( F_{fre} \right )`$ ，其中 Proj 是一个可学习的多层感知机（MLP），τ 是一个标量温度参数，·表示内积符号。 
 
-**门机制** 如图2所示，参考图像中字符的冲程区域通常稀疏，并且背景噪声会干扰特征提取。为了应对这一挑战，我们提出了一种门机制来选择性地过滤样本信息 I<sub>s</sub> ，如图3所示。具体来说，提取出的样本风格特征 F<sub>spa</sub> 被输入到一个门层中，该层由可学习的全连接层和随后的Sigmoid激活组成，以获得相应的门单元 $`W = \left \{ w_i \right \}_{i=1}^d \in R^d `$。每个单元 w<sub>i</sub> 决定了对应 $`f_{spa}^i`$ 的通过率，在 w<sub>i</sub> 较大的情况下允许更高的通过率。这种设计有效地实现了在抑制多余背景噪声的同时提取出具有信息性的风格特征$`\hat{F}_{spa} = \left \{ \hat{f}_{spa}^i \right \}_{i=1}^{d}`$，其中 $`\hat{f}_{spa}^i = f_{spa}^i · w_i`$。 
+**门机制** 如图2所示，参考图像中字符的笔画区域通常稀疏，并且背景噪声会干扰特征提取。为了应对这一挑战，我们提出了一种门机制来选择性地过滤样本信息 I<sub>s</sub> ，如图3所示。具体来说，提取出的样本风格特征 F<sub>spa</sub> 被输入到一个门层中，该层由可学习的全连接层和随后的Sigmoid激活组成，以获得相应的门单元 $`W = \left \{ w_i \right \}_{i=1}^d \in R^d `$。每个单元 w<sub>i</sub> 决定了对应 $`f_{spa}^i`$ 的通过率，在 w<sub>i</sub> 较大的情况下允许更高的通过率。这种设计有效地实现了在抑制多余背景噪声的同时提取出具有信息性的风格特征$`\hat{F}_{spa} = \left \{ \hat{f}_{spa}^i \right \}_{i=1}^{d}`$，其中 $`\hat{f}_{spa}^i = f_{spa}^i · w_i`$。 
 
 <a id="3.3风格内容融合模块Style-contentFusionModule"></a>
 ### 3.3 风格内容融合模块 Style-content Fusion Module
