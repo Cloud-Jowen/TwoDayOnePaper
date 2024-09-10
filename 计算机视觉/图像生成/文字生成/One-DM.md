@@ -81,8 +81,12 @@ L = L_{lapNCE} + L_{rec}
 
 <a id="3.2风格增强模块Style-enhancedModule"></a>
 ### 3.2 风格增强模块 Style-enhanced Module
-我们提出了一种风格增强模块，通过将参考图像I<sub>s</sub>中的高频成分 $H_s \in R^{h×w×c}$ （其中 $I_s \in R^{h×w×c}$）整合到风格提取中，以提高清晰的风格模式。如图2所示，在像字符倾斜和形状连接这样的高频组件中，更清晰的风格模式被呈现出来。如图3所示，我们使用拉普拉斯核作为高频滤波器来从 I<sub>s</sub> 中提取 H<sub>s</sub> 。拉普拉斯核在不需要快速傅里叶变换（FFT）和频率域参数分离的情况下，擅长提取高频信息。然后，两个风格编码器 E<sub>spa</sub> 和 E<sub>fre</sub> 分别处理 I<sub>s</sub> 和 H<sub>s</sub> 。这种独立处理导致了独特的风格特征：$`F_{spa} = \left \{  f_{spa}^i\right \}_{i=1}^d \in R^{d×c} $` 来自Espa和Ff re={f fi re}id=1∈ Rd×c来自Ef re，其中d=h×w。虽然结构相同，但Espa和Ef re不共享权重。然后，提出的LlapNCE迫使Ef re专注于提取有鉴别力的风格特征。 
+我们提出了一种风格增强模块，通过将参考图像I<sub>s</sub>中的高频成分 $H_s \in R^{h×w×c}$ （其中 $I_s \in R^{h×w×c}$）整合到风格提取中，以提高清晰的风格模式。如图2所示，在像字符倾斜和形状连接这样的高频组件中，更清晰的风格模式被呈现出来。如图3所示，我们使用拉普拉斯核作为高频滤波器来从 I<sub>s</sub> 中提取 H<sub>s</sub> 。拉普拉斯核在不需要快速傅里叶变换（FFT）和频率域参数分离的情况下，擅长提取高频信息。然后，两个风格编码器 E<sub>spa</sub> 和 E<sub>fre</sub> 分别处理 I<sub>s</sub> 和 H<sub>s</sub> 。这种独立处理导致了独特的风格特征：来自 E<sub>spa</sub> 编码器的 $`F_{spa} = \left \{  f_{spa}^i\right \}_{i=1}^d \in R^{d×c} `$ 和来自 E<sub>fre</sub> 编码器的和 $`F_{fre} = \left \{  f_{fre}^i\right \}_{i=1}^d \in R^{d×c} `$，其中 $`d=h×w`$ 。虽然结构相同，但E<sub>spa</sub>和E<sub>fre</sub>不共享权重。然后，提出的 L<sub>lapNCE</sub> 迫使 E<sub>fre</sub> 编码器专注于从 H<sub>s</sub> 中提取有鉴别力的风格特征。设计了一个门机制，以选择性地过滤出参考样式特征中的背景噪声，仅允许有意义的样式模式通过。 
 
+**Laplacian对比学习** 本文提出的 L<sub>lapNCE</sub> 的目标是引导高频风格编码器 E<sub>fre</sub> 从高频信息中学习更具有区分性的风格特征，因此我们提出将提取的属于同一作者的风格特征 E<sub>fre</sub> 拉近，而将来自不同作者的风格特征 E<sub>fre</sub> 拉开距离。我们将我们的 L<sub>lapNCE</sub> 表示如下：
+```math
+L_{lapNCE} = - \frac{1}{N}\sum_{i \in M}^{}\frac{1}{\left |  P(i)\right | }\sum_{p \in P(i)}^{} log \frac{exp\left ( z_i \times z_p  / \tau \right ) }{ {\textstyle \sum_{a \in A(i)}^{}exp\left ( z_i \times z_p  / \tau \right )} }
+```
 
 <a id="4.实验Experiments"></a>
 ## 4.实验 Experiments
