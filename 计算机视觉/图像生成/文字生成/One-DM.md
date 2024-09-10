@@ -81,13 +81,16 @@ L = L_{lapNCE} + L_{rec}
 
 <a id="3.2风格增强模块Style-enhancedModule"></a>
 ### 3.2 风格增强模块 Style-enhanced Module
-我们提出了一种风格增强模块，通过将参考图像I<sub>s</sub>中的高频成分 $H_s \in R^{h×w×c}$ （其中 $I_s \in R^{h×w×c}$）整合到风格提取中，以提高清晰的风格模式。如图2所示，在像字符倾斜和形状连接这样的高频组件中，更清晰的风格模式被呈现出来。如图3所示，我们使用拉普拉斯核作为高频滤波器来从 I<sub>s</sub> 中提取 H<sub>s</sub> 。拉普拉斯核在不需要快速傅里叶变换（FFT）和频率域参数分离的情况下，擅长提取高频信息。然后，两个风格编码器 E<sub>spa</sub> 和 E<sub>fre</sub> 分别处理 I<sub>s</sub> 和 H<sub>s</sub> 。这种独立处理导致了独特的风格特征：来自 E<sub>spa</sub> 编码器的 $`F_{spa} = \left \{  f_{spa}^i\right \}_{i=1}^d \in R^{d×c} `$ 和来自 E<sub>fre</sub> 编码器的和 $`F_{fre} = \left \{  f_{fre}^i\right \}_{i=1}^d \in R^{d×c} `$，其中 $`d=h×w`$ 。虽然结构相同，但E<sub>spa</sub>和E<sub>fre</sub>不共享权重。然后，提出的 L<sub>lapNCE</sub> 迫使 E<sub>fre</sub> 编码器专注于从 H<sub>s</sub> 中提取有鉴别力的风格特征。设计了一个门机制，以选择性地过滤出参考样式特征中的背景噪声，仅允许有意义的样式模式通过。 
+我们提出了一种风格增强模块，通过将参考图像I<sub>s</sub>中的高频成分 $H_s \in R^{h×w×c}$ （其中 $I_s \in R^{h×w×c}$）整合到风格提取中，以提高清晰的风格模式。如图2所示，在像字符倾斜和形状连接这样的高频组件中，更清晰的风格模式被呈现出来。如图3所示，我们使用拉普拉斯核作为高频滤波器来从 I<sub>s</sub> 中提取 H<sub>s</sub> 。拉普拉斯核在不需要快速傅里叶变换（FFT）和频率域参数分离的情况下，擅长提取高频信息。然后，两个风格编码器 E<sub>spa</sub> 和 E<sub>fre</sub> 分别处理 I<sub>s</sub> 和 H<sub>s</sub> 。这种独立处理导致了独特的风格特征：来自 E<sub>spa</sub> 编码器的 $`F_{spa} = \left \{  f_{spa}^i\right \}_{i=1}^d \in R^{d×c} `$ 和来自 E<sub>fre</sub> 编码器的和 $`F_{fre} = \left \{  f_{fre}^i\right \}_{i=1}^d \in R^{d×c} `$，其中 $`d=h×w`$ 。虽然结构相同，但 E<sub>spa</sub> 和 E<sub>fre</sub> 不共享权重。然后，提出的 L<sub>lapNCE</sub> 迫使 E<sub>fre</sub> 编码器专注于从 H<sub>s</sub> 中提取有鉴别力的风格特征。设计了一个门机制，以选择性地过滤出参考样式特征中的背景噪声，仅允许有意义的样式模式通过。 
 
 **Laplacian对比学习** 本文提出的 L<sub>lapNCE</sub> 的目标是引导高频风格编码器 E<sub>fre</sub> 从高频信息中学习更具有区分性的风格特征，因此我们提出将提取的属于同一作者的风格特征 E<sub>fre</sub> 拉近，而将来自不同作者的风格特征 E<sub>fre</sub> 拉开距离。我们将我们的 L<sub>lapNCE</sub> 表示如下：
 ```math
 L_{lapNCE} = - \frac{1}{N}\sum_{i \in M}^{}\frac{1}{\left |  P(i)\right | }\sum_{p \in P(i)}^{} log \frac{exp\left ( z_i · z_p  / \tau \right ) }{ {\textstyle \sum_{a \in A(i)}^{}exp\left ( z_i · z_p  / \tau \right )} }  
 ```
 具体来说，$`i \in M = \left \{ 1...N \right \} `$ 是mini-batch中大小为 N 的任何元素的索引，$`A(i) = M \setminus \left \{ i \right \}  `$是与 i 不同的其他索引。Z<sub>i</sub> 是一个属于作者 w<sub>i</sub> 的锚样本，并且$`P\left ( i \right ) = \left \{ p \in A(i):w_p =w_i \right \}`$是它的内批正样本集，而$`A(i) \setminus P(i)`$是它的负样本集。这里，$`z = Proj\left ( F_{fre} \right )`$ ，其中 Proj 是一个可学习的多层感知机（MLP），τ 是一个标量温度参数，·表示内积符号。 
+
+**门机制** 如图2所示，参考图像中字符的冲程区域通常稀疏，并且背景噪声会干扰特征提取。为了应对这一挑战，我们提出了一种门机制来选择性地过滤样本信息 I<sub>s</sub> ，如图3所示。具体来说，提取出的样本风格特征 F<sub>spa</sub> 被输入到一个门层中，该层由可学习的全连接层和随后的Sigmoid激活组成，以获得相应的门单元 $`W = \left \{ w_i \right \}_{i=1}^d \in R^d `$。每个单元 w<sub>i</sub> 决定了对应 $`f_{spa}^i`$ 的通过率，在 w<sub>i</sub> 较大的情况下允许更高的通过率。这种设计有效地实现了在抑制多余背景噪声的同时提取出具有信息性的风格特征$`\hat{F_{spa}} = \left \{ \hat{f_{spa}^i} \right \}_{i=1}^d`$，其中 $`\hat{f_{spa}^i} = f_{spa}^i · w_i`$。 
+
 <a id="4.实验Experiments"></a>
 ## 4.实验 Experiments
 
