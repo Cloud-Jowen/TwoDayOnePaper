@@ -124,6 +124,7 @@ q(x_t|x_{t-1},g) = \mathcal{N}(x_t;\sqrt{1-\beta_t}x_{t-1},\beta_tI)
 \mathcal{L}_{rec} = \mathbb{E}_{t,q} \left \| \mu_t(x_t,x_0) - \mu_\theta(x_t,g,t) \right \|_2^2
 ```
 
+其中，$`\mu_t(x_t,x_0)`$ 是后验 $`q(x_t|x_{t-1})`$ 的均值，具有闭式解。我们将在附录B中给出更多细节。
 <a id="4.实验Experiments"></a>
 ## 4.实验 Experiments
 
