@@ -104,7 +104,7 @@ g = Atten_2\left ( Q_2 = K_2 = V_2 = O + E \right )
 
 <a id="3.4条件扩散模型ConditionalDiffusionModel"></a>
 ### 3.4 条件扩散模型 Conditional Diffusion Model
-条件扩散模型 p<sub>θ</sub> 的目标是生成由获得的条件 g 引导的手写文本的真实图像。具体来说，如图3所示，在g的指导下，pθ执行一个去噪生成过程，从采样的高斯噪声x_T开始，逐步去噪以获取所需的手写文本x0： 
+条件扩散模型 p<sub>θ</sub> 的目标是生成由获得的条件 g 引导的手写文本的真实图像。具体来说，如图3所示，在g的指导下，p<sub>θ</sub>执行一个去噪生成过程，从采样的高斯噪声 x<sub>T</sub> 开始，逐步去噪以获取所需的手写文本x0： 
 ```math
 p_\theta \left ( x_0|g \right ) = \int p_\theta \left ( x_{0:T}|g \right )d_{x_1:T}, 
 ```
@@ -115,7 +115,7 @@ p_\theta \left ( x_{0:T}|g \right )d_{x_1:T} = p(x_T)\prod_{t=1}^{T}p_\theta(x_{
 p_\theta(x_{t-1}|xt,g) = \mathcal{N}(x_{t-1};\mu_\theta(x_t,g,t),\sum_\theta(x_t,g,t)) 
 ```
 
-去噪过程旨在学习如何逆向执行预先定义的正向过程，如DDPM [20] 中所述。 正向过程被建模为固定马尔可夫链，在此过程中，符合正态分布的噪声逐渐添加到x_{t-1}以获得x_t。 这可以数学表达如下：
+去噪过程旨在学习如何逆向执行预先定义的正向过程，如DDPM [20] 中所述。 正向过程被建模为固定马尔可夫链，在此过程中，符合正态分布的噪声逐渐添加到 x<sub>t-1</sub> 以获得 x<sub>t</sub> 。 这可以数学表达如下：
 ```math
 q(x_t|x_{t-1},g) = \mathcal{N}(x_t;\sqrt{1-\beta_t}x_{t-1},\beta_tI)
 ```
