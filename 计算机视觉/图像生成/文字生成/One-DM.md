@@ -14,7 +14,7 @@
 ## 相关链接
 参考博文链接：  
 参考视频链接：  
-源码链接：  https://github.com/dailenson/One-DM
+源码链接：  https://github.com/dailenson/One-DM  
 论文链接：  https://arxiv.org/pdf/2409.04004
 
 <a id="0.摘要Abstract"></a>
