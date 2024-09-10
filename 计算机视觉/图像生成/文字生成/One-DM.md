@@ -115,6 +115,15 @@ p_\theta \left ( x_{0:T}|g \right )d_{x_1:T} = p(x_T)\prod_{t=1}^{T}p_\theta(x_{
 p_\theta(x_{t-1}|xt,g) = \mathcal{N}(x_{t-1};\mu_\theta(x_t,g,t),\sum_\theta(x_t,g,t)) 
 ```
 
+去噪过程旨在学习如何逆向执行预先定义的正向过程，如DDPM [20] 中所述。 正向过程被建模为固定马尔可夫链，在此过程中，符合正态分布的噪声逐渐添加到xt-1以获得xt。 这可以数学表达如下：
+```math
+q(x_t|x_{t-1},g) = \mathcal{N}(x_t;\sqrt{1-\beta_t}x_{t-1},\beta_tI)
+```
+其中噪声由方差计划 β<sub>t</sub> 表征。在训练过程中，对最大似然目标应用变分约束来引导生成过程从条件为g的标准高斯噪声 x<sub>T</sub> 中恢复 x<sub>0</sub> 。我们给出的训练目标如下： 
+```math
+\mathcal{L}_{rec} = \mathbb{E}_{t,q} \left \| \mu_t(x_t,x_0) - \mu_\theta(x_t,g,t) \right \|_2^2
+```
+
 <a id="4.实验Experiments"></a>
 ## 4.实验 Experiments
 
