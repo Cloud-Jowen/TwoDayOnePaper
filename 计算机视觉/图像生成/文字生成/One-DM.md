@@ -5,8 +5,15 @@
 [**1.介绍 Introduction**](#1.介绍Introduction)  
 [**2.相关工作 Related work**](#2.相关工作Relatedwork)  
 [**3.方法 Method**](#3.方法Method)  
-&emsp;[**3.1**](#3.1)  
+&emsp;[**3.1 总体方案 Overall Scheme**](#3.1总体方案OverallScheme)   
+&emsp;[**3.2 风格增强模块 Style-enhanced Module**](#3.2风格增强模块Style-enhancedModule)   
+&emsp;[**3.3 风格内容融合模块 Style-content Fusion Module**](#3.3风格内容融合模块Style-contentFusionModule)  
 [**4.实验 Experiments**](#4.实验Experiments)  
+&emsp;[**4.1 实验设置 Experimental Settings**](#4.1实验设置ExperimentalSettings)  
+&emsp;[**4.2 主要结论 Main Results**](#4.2主要结论MainResults)  
+&emsp;[**4.3 分析 Analysis**](#4.3分析Analysis)  
+&emsp;[**4.4 与SOTA工业方法的比较 Comparisons with SOTA Industrial Methods**](#4.4与SOTA工业方法的比较ComparisonswithSOTAIndustrialMethods)  
+&emsp;[**在其他语言上的应用 Applications to Other Languages**](#4.5在其他语言上的应用ApplicationstoOtherLanguages)  
 [**5.结论 Conclusion**](#5.结论Conclusion)  
 
 
@@ -63,8 +70,8 @@
 
 为了应对这一任务，我们引入高频信息来增强书写风格的提取。现有的方法 [5、9、14、15、27、46] 常常使用简单的卷积神经网络或transformer编码器直接处理样式图像，往往导致不理想的风格提取。相比之下，我们通过创新Laplacian高频率提取和门控机制引入一种新颖的One-shot diffusion mimicker（One-DM）。我们的One-DM能够有效地从单个参考中捕获样式特征，并抑制背景噪声。 
 
-<a id="3.1总体方案"></a>
-### 3.1 总体方案
+<a id="3.1总体方案OverallScheme"></a>
+### 3.1 总体方案 Overall Scheme
 我们的高级想法集中在从风格参考图像中提取高频信息以增强风格模式的提取。一种直接的方法是使用一个普通的transformer编码器来从风格图像及其相应的高频图像中提取风格特征。这种简单的解决方案遇到了两个主要问题：（1）缺乏有效的监督目标仍然使准确学习原始图像中的作者风格模式具有挑战性，（2）从原始图像中捕获到的风格特征仍保留有噪声背景， 
 
 为了解决上述问题，我们开发了一种更有效的方法，如图3所示。我们的方法包括一个风格增强模块、内容编码器、风格内容融合模块和条件扩散模块。首先，我们使用拉普拉斯核作为高频滤波器从风格参考中提取高频成分。然后，两个并行的风格编码器同时从风格参考及其高频信息中提取相应的风格特征。由于风格参考中经常存在不希望有的背景噪声，因此我们设计了一个门机制来促进有信息风格特征的传输，并抑制噪声的传输。在高频成分中的风格模式相对干净且更加明显，有助于观察个体风格，例如字符倾斜。对于观察，我们提出一种对比学习目标，称为 LaplacianNCE ，以强制执行从高频成分中进行更具区分性的风格学习。 
