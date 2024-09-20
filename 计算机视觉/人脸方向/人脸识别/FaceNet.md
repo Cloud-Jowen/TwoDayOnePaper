@@ -123,7 +123,7 @@ embedding 由 $`f(x) \in \mathbb{R}^d `$ 表示。它将图像 x 映射到一个
 
 （译者注：3.2小节是一个亮点，论述了三元组的原则策略。总的来说，为了保证构建的三元组都是能够稳定提供Loss，作者采取如下的方法：对每个 batch ，让 batch 里的每个人至少有40张不同的脸部图像，这是为了这个人的 anchor-positive 距离是有代表性的。以下是无伤大雅的假设：这 40 张图像组成了正样本集，而负样本是其他人的脸，是随机采样来的。每个 anchor 会跟 40 张正样本组成 40 个 anchor-positive 对，而负样本的选择并不是随机选取或最困难的负样本的，而是选择那些 semi-hard 负样本图片，这样可以避免选择模型不收敛。最困难的样本可能不是负样本而是标错了。这部分图片作为负样本集跟 anchor-positive 对组成三元组）
 
-![image](https://github.com/user-attachments/assets/5bf9ea03-489a-4410-bfc0-f0267df4ca01)  
+![image](https://github.com/user-attachments/assets/e141a1e1-850b-4b01-9000-656264a34af5)  
 (译者配图，semihard示例)
 
 <a id="3.3DeepConvolutionalNetworks"></a>
