@@ -98,19 +98,18 @@ embedding 由 $`f(x) \in \mathbb{R}^d `$ 表示。它将图像 x 映射到一个
 ### 3.2 Triplet Selection
 为了确保快速收敛，选择违反方程（1）中三元组约束的三元组至关重要。这意味着，在给定 anchor 图像 $`x_i^a`$ 的情况下，我们希望选择一个$`x_i^p`$（硬正例），使得$`argmax_{x_i^p}\left \| f(x_i^a) - f(x_i^p)  \right \| _2^2`$，并且类似地选择$`x_i^n`$ (硬负例），使得$`argmin_{x_i^p}\left \| f(x_i^a) - f(x_i^n)  \right \| _2^2`$
 在整个训练集中计算argmin和argmax是不可行的。此外，这可能会导致不良的训练，因为误标记和图像质量差的脸会主导困难的正负样本。
-（译者注，直白来讲就是要找到离anchor最远的正样本和最近的负样本组成三元组，这样可以快速优化，因为都是有问题的样本，然而这种方式全局搜索非常消耗时间，同时受离散点影响较大，会脏数据也会产生很大影响）
+（译者注，直白来讲就是要找到离anchor最远的正样本和最近的负样本组成三元组，这样可以快速优化，因为都是有问题的样本，然而这种方式全局搜索非常消耗时间，同时受离散点影响较大，会脏数据也会产生很大影响）  
+
 有两个明显的解决方案可以避免这个问题：
 
 • 在每n步生成三元组，使用最新的 model checkpoint，并在数据的子集上计算argmin和argmax。   
 • 在线生成三元组。这可以通过从 mini-batch 中选择困难的正/负示例来完成。 
 
- 在这里，我们关注在线生成，并使用数千个示例的大型 mini-batch。仅在 mini-batch 内计算 argmin 和 argmax 。 
+在这里，我们关注在线生成，并使用batchsize为数千的大型 mini-batch。仅在 mini-batch 内计算 argmin 和 argmax 。 
 
 为了获得有意义的 anchor-positive 距离表示，需要确保每个 mini-batch 中包含每个人的最小样本数。在我们的实验中，我们从训练数据中采样，使得每个 mini-batch 中大约选取 40 张不同人的脸。此外，还会向每个 mini-batch 中添加随机采样的负样本。
 
-我们没有选择最困难的正样本，而是使用 mini-batch 中的所有 anchor-positive 对，并且仍然选择最难的负样本。我们没有在 mini-batch 中比较硬锚定-正样本对和所有锚定-正样本对之间的侧边对比，但我们发现实践中，全部锚定-正样本方法更加稳定，在训练初期收敛速度稍快一些。 
-
-我们没有选择最困难的正样本，而是使用 mini-batch 中的所有 anchor-positive 对，并且仍然选择最难的负样本。我们没有在mini-batch 中比较 hard anchor-positive 对和所有 anchor-positive 对之间的 margin 对比，但在实践中我们发现，全部 anchor-positive 方法更加稳定，在训练初期收敛速度稍快一些。 
+我们没有选择最困难的正样本，而是使用 mini-batch 中的所有 anchor-positive 对，并且仍然选择最难的负样本。我们没有在 mini-batch 中比较 anchor-hardpositive 和所有anchor-positive 之间的 margin 值，但我们发现实践中，全部 anchor-positive 方法更加稳定，在训练初期收敛速度稍快一些。 
 
 我们还探讨了离线生成三元组与在线生成三元组的结合使用，这可能允许使用更小的 batch size，但实验结果并不能证明这一结论。
 
@@ -120,7 +119,7 @@ embedding 由 $`f(x) \in \mathbb{R}^d `$ 表示。它将图像 x 映射到一个
 ```
 我们称这些负例为半硬的，因为它们比正例更远离锚点，但仍然很困难，因为平方距离接近锚点和正例之间的距离。那些负例位于阈值α之内。 (也就是离的没那么远的负样本，没有超过正负样本的分界线)
 
-正如前面提到的，正确三元组选择对于快速收敛至关重要。一方面我们希望使用小mini-batch，因为这些在Stochastic Gradient Descent (SGD) [20]中倾向于改善收敛性。另一方面，实验细节展示包含数十到数百个示例的小批量更有效率。然而，与批处理大小相关的最主要限制是我们在mini-batch内部选择困难相关三元组的方式。大多数实验中使用的批处理大小约为1,800个示例。 
+正如前面提到的，正确三元组选择对于快速收敛至关重要。一方面我们希望使用小 mini-batch，因为这些在Stochastic Gradient Descent (SGD) [20]中倾向于改善收敛性。另一方面，实验细节展示包含数十到数百个示例的小 batch 更有效率。然而，与 batch size 相关的最主要限制是我们在 mini-batch 内部选择困难相关三元组的方式。大多数实验中使用的 batch size 约为1,800个示例。 
 
 <a id="3.3DeepConvolutionalNetworks"></a>
 ### 3.3 Deep Convolutional Networks
