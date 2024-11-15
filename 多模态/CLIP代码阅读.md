@@ -122,5 +122,9 @@ to_4tuple = _ntuple(4)
 to_ntuple = lambda n, x: _ntuple(n)(x)
 ```
 这个函数根据 x 的类型来决定如何处理：
+
   如果 x 是可迭代对象（例如列表或元组），则直接返回 x。
+
   如果 x 不是可迭代对象，则将 x 重复 n 次，并返回一个元组。
+
+在 PreprogressCfg 中，`size = 224`，则经过 `to_2tuple`函数 后会变成（）
