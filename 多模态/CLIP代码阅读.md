@@ -35,6 +35,7 @@ class PreprocessCfg: # clip 图像预处理的配置信息
 下面的示例给出了一个简单的 `dataclass` 示例，用来展示它的自动生成功能:
 
 ```python
+# Code From GPT，it has been checked✅
 from dataclasses import dataclass
 
 @dataclass
