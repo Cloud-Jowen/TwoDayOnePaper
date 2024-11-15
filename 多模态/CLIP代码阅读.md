@@ -93,3 +93,34 @@ class PreprocessCfg:
         assert self.mode in ('RGB',)
 ```
 
+最后看一下这段代码
+
+```python
+    @property
+    def input_size(self):
+        return (self.num_channels,) + to_2tuple(self.size)
+```
+@property 装饰器将方法变成属性，调用时后面不再需要使用`()`。
+
+而`to_2tuple`函数是一个自定义的工具函数
+```python
+from itertools import repeat
+import collections.abc
+# From PyTorch internals
+def _ntuple(n):
+    def parse(x):
+        if isinstance(x, collections.abc.Iterable):
+            return x
+        return tuple(repeat(x, n))
+    return parse
+
+
+to_1tuple = _ntuple(1)
+to_2tuple = _ntuple(2)
+to_3tuple = _ntuple(3)
+to_4tuple = _ntuple(4)
+to_ntuple = lambda n, x: _ntuple(n)(x)
+```
+这个函数根据 x 的类型来决定如何处理：
+  如果 x 是可迭代对象（例如列表或元组），则直接返回 x。
+  如果 x 不是可迭代对象，则将 x 重复 n 次，并返回一个元组。
