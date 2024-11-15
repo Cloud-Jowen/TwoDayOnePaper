@@ -35,7 +35,12 @@ class PreprocessCfg: # clip 图像预处理的配置信息
 下面的示例给出了一个简单的 `dataclass` 示例，用来展示它的自动生成功能:
 
 ```python
-# Code From GPT，it has been checked✅
+# ═══════════════════════════════════════════════
+# Code from GPT - Verified ✅
+# This code has been checked and is ready to use.
+# ═══════════════════════════════════════════════
+
+
 from dataclasses import dataclass
 
 @dataclass
@@ -55,8 +60,14 @@ another_product = Product(name="Laptop", price=1200.00, quantity=5)
 print(product == another_product)  # 输出: True
 ```
 
-贴一个上述 PreprogressCfg 的普通实例化方法，二者的对比可以更好的展示 `dataclass` 的便捷
+贴一个上述 PreprogressCfg 的普通实例化方法，二者的对比可以更好的展示 `dataclass` 的便捷。
 ```python
+# ═══════════════════════════════════════════════
+# Code from GPT - Verified ✅
+# This code has been checked and is ready to use.
+# ═══════════════════════════════════════════════
+
+
 class PreprocessCfg:
     def __init__(self, size=224, mode='RGB', mean=None, std=None, interpolation='bicubic', resize_mode='shortest', fill_color=0):
         if mean is None:
@@ -70,5 +81,15 @@ class PreprocessCfg:
         self.interpolation = interpolation
         self.resize_mode = resize_mode
         self.fill_color = fill_color
+```
+很显然，用 `dataclass` 装饰后的类要简洁的多，省去了很多 `self.属性 = 属性` 的步骤，代码看起来也更加的简洁。
+
+`dataclass` 是 python 的标准库，无需 pip，一键使用，想让你的代码更加🌟pythonic🌟的同学不要错过！！
+
+在上述的 PreprocessCfg 类中，还有着一个方法 `__post_init__`，这个方法是 `dataclass` 的一个特殊方法，它的执行时机是在 `__init__` 方法执行完毕之后，通常被用来进行一些后处理或者验证操作。在这里就是检查颜色通道是否是 RGB。
+
+```python
+    def __post_init__(self):
+        assert self.mode in ('RGB',)
 ```
 
