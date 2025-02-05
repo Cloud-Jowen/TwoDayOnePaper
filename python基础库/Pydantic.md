@@ -18,7 +18,5 @@ Pydantic 是一个用于数据验证和设置管理的 Python 库，主要基于
 
 ### 安装 Pydantic
 
-首先，确保你已经安装了 Pydantic：
-
 ```bash
 pip install pydantic
