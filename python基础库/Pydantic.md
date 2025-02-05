@@ -22,43 +22,26 @@ Pydantic 是一个用于数据验证和设置管理的 Python 库，主要基于
 pip install pydantic
 ```
 
-### 示例
+### 基本用法
 
+**定义模型**
+
+这里是一个简单的示例，展示如何定义一个数据模型User 
+
+该模型拥有三个值:id/name/email,格式分别是int/str/str
 ```python
-from datetime import datetime
-
-from pydantic import BaseModel, PositiveInt
-
+from pydantic import BaseModel, ValidationError
 
 class User(BaseModel):
-    id: int  
-    name: str = 'John Doe'  
-    signup_ts: datetime | None  
-    tastes: dict[str, PositiveInt]  
+    id: int
+    name: str
+    email: str
 
-
-external_data = {
-    'id': 123,
-    'signup_ts': '2019-06-01 12:22',  
-    'tastes': {
-        'wine': 9,
-        b'cheese': 7,  
-        'cabbage': '1',  
-    },
-}
-
-user = User(**external_data)  
-
-print(user.id)  
-#> 123
-print(user.model_dump())  
-"""
-{
-    'id': 123,
-    'name': 'John Doe',
-    'signup_ts': datetime.datetime(2019, 6, 1, 12, 22),
-    'tastes': {'wine': 9, 'cheese': 7, 'cabbage': 1},
-}
-"""
+# 创建一个 User 实例
+user = User(id=1, name="Alice", email="alice@example.com")
+print(user)
 ```
+
+**数据验证**
+Pydantic 会自动验证输入数据类型，如果传入的数据不符合预期，会引发 ValidationError：
 
