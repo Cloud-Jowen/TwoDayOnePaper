@@ -81,6 +81,9 @@ print(user_from_json)
 
 ⚠️ 上述示例中，通过字典实例化一个Basemodel对象,传入的值不是 `data` 而是 `**data`，这是因为传入`**data`时，是将字典 data 中的键值对作为参数进行传入，而不是data本身。如果传入的是data(以普通字典的形式传入)，那么在函数内部需要显式的访问字典的键来获取对应的值（value = data['key']）。用 `**data` 就可以自动遍历所有键值对，不用手动指定键名。非常 🌟Pythonic🌟
 
+
+`parse_raw` 是 `BaseModel` 的内置方法，作用是以把 json 转成 `BaseModel` 的实例
+
 ### Field
 
 `Field` 是 Pydantic 提供的一个函数，用于为模型的字段添加额外的元数据和验证规则。通过 `Field`，你可以更精细地控制字段的行为，例如：
@@ -116,6 +119,8 @@ class User(BaseModel):
         regex=r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", # regular expression 正则表达式
         description="用户的电子邮件地址"
     )
+print(user)
+print(user.schema_json(indent=2)) 
 ```
 输出
 ```python
@@ -158,3 +163,64 @@ id=1 username='john_doe' age=18 email='john.doe@example.com'
   ]
 }
 ```
+
+其中，`schema_json` 是 `BaseModel` 的内置方法，作用是以把 `BaseModel` 的相关信息转成 json 形式
+
+### create_model
+
+`create_model` 是 Pydantic 提供的一个动态创建数据模型的函数。它允许你在运行时根据需要创建新的模型类，而不需要提前定义类。这在某些动态场景中非常有用，例如：
+
+- **根据配置文件动态生成模型。**
+- **根据 API 响应动态创建模型。**
+- **在运行时根据用户输入生成模型。**
+
+```python
+from pydantic import BaseModel, create_model, Field
+
+# 动态创建一个模型
+DynamicUser = create_model(
+    "DynamicUser",
+    id=(int, Field(..., description="用户的唯一标识符")),
+    username=(str, Field(..., min_length=3, max_length=50, description="用户名")),
+    age=(int, Field(default=18, ge=0, le=120, description="用户的年龄")),
+)
+
+# 使用动态创建的模型
+user = DynamicUser(id=1, username="john_doe")
+print(user)
+print(user.schema_json(indent=2))
+```
+
+输出
+```python
+id=1 username='john_doe' age=18
+{
+  "title": "DynamicUser",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "用户的唯一标识符",
+      "type": "integer"
+    },
+    "username": {
+      "description": "用户名",
+      "minLength": 3,
+      "maxLength": 50,
+      "type": "string"
+    },
+    "age": {
+      "description": "用户的年龄",
+      "default": 18,
+      "minimum": 0,
+      "maximum": 120,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "username"
+  ]
+}
+```
+
+使用 create_model 可以直接创建一个 BaseModel 实例，结合 Field 就可以对 BaseModel 进行个性化创建
