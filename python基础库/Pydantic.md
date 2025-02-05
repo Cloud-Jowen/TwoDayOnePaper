@@ -29,6 +29,7 @@ pip install pydantic
 这里是一个简单的示例，展示如何定义一个数据模型User 
 
 该模型拥有三个值:id/name/email,格式分别是int/str/str
+
 ```python
 from pydantic import BaseModel, ValidationError
 
@@ -43,5 +44,31 @@ print(user)
 ```
 
 **数据验证**
+
 Pydantic 会自动验证输入数据类型，如果传入的数据不符合预期，会引发 ValidationError：
 
+```python
+try:
+    user = User(id="not_an_int", name="Bob", email="bob@example.com")
+except ValidationError as e:
+    print(e.json())  # 输出验证错误信息
+```
+
+**数据解析**
+
+Pydantic 允许从 JSON 字符串或字典数据来实例化一个BaseModel：
+```python
+import json
+
+# 从字典解析
+data = {"id": 2, "name": "Charlie", "email": "charlie@example.com"}
+user_from_dict = User(**data)
+print(user_from_dict)
+
+# 从 JSON 字符串解析
+data_json = json.dumps(data)
+user_from_json = User.parse_raw(data_json)
+print(user_from_json)
+```
+
+⚠️ 上述示例中，通过字典实例化一个Basemodel对象,传入的值不是 `data` 而是 `**data`，这是因为传入`**data`时，是将字典 data 中的键值对作为参数进行传入，而不是data本身。如果传入的是data(以普通字典的形式传入)，那么在函数内部需要显式的访问字典的键来获取对应的值（value = data['key']）。用 `**data` 就可以自动遍历所有键值对，不用手动指定键名。非常 🌟Pythonic🌟
