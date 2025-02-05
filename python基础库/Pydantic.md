@@ -20,6 +20,8 @@ Pydantic 是一个用于数据验证和设置管理的 Python 库，主要基于
 
 ```bash
 pip install pydantic
+```
+
 
 ```python
 from datetime import datetime
@@ -57,4 +59,5 @@ print(user.model_dump())
     'tastes': {'wine': 9, 'cheese': 7, 'cabbage': 1},
 }
 """
+```
 
