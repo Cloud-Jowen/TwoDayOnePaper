@@ -47,6 +47,7 @@ class User(BaseModel):
 # 创建一个 User 实例
 user = User(id=1, name="Alice", email="alice@example.com")
 print(user)
+# id=1 name='Alice' email='alice@example.com'
 ```
 
 **数据验证**
@@ -58,6 +59,7 @@ try:
     user = User(id="not_an_int", name="Bob", email="bob@example.com")
 except ValidationError as e:
     print(e.json())  # 输出验证错误信息
+# [{"type":"int_parsing","loc":["id"],"msg":"Input should be a valid integer, unable to parse string as an integer","input":"not_an_int","url":"https://errors.pydantic.dev/2.10/v/int_parsing"}]
 ```
 
 **数据解析**
@@ -79,4 +81,80 @@ print(user_from_json)
 
 ⚠️ 上述示例中，通过字典实例化一个Basemodel对象,传入的值不是 `data` 而是 `**data`，这是因为传入`**data`时，是将字典 data 中的键值对作为参数进行传入，而不是data本身。如果传入的是data(以普通字典的形式传入)，那么在函数内部需要显式的访问字典的键来获取对应的值（value = data['key']）。用 `**data` 就可以自动遍历所有键值对，不用手动指定键名。非常 🌟Pythonic🌟
 
-**Field**
+### Field
+
+`Field` 是 Pydantic 提供的一个函数，用于为模型的字段添加额外的元数据和验证规则。通过 `Field`，你可以更精细地控制字段的行为，例如：
+
+- **添加字段的描述**：用于文档生成。
+- **设置默认值**：提供字段的默认值。
+- **添加验证规则**：如最小值、最大值、正则表达式等。
+- **标记字段是否必需**：指示某个字段在实例化时是否是必填项。
+
+**示例**
+
+以下是一个使用 `Field` 的简单示例：
+
+```python
+from pydantic import BaseModel, Field
+
+class User(BaseModel):
+    id: int = Field(..., description="用户的唯一标识符") # Field 里的 ... 表示该字段是必须的,在创建模型实例时必须提供值
+    username: str = Field(
+        ..., 
+        min_length=3,  # 字符串的最小长度
+        max_length=50, # 字符串的最大长度
+        description="用户名，长度必须在 3 到 50 个字符之间"
+    )
+    age: int = Field(
+        default=18, 
+        ge=0,   # greater than or equal to 大于等于
+        le=120, # less than or equal to 小于等于
+        description="用户的年龄，必须在 0 到 120 之间"
+    )
+    email: str = Field(
+        ..., 
+        regex=r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", # regular expression 正则表达式
+        description="用户的电子邮件地址"
+    )
+```
+输出
+```python
+id=1 username='john_doe' age=18 email='john.doe@example.com'
+{
+  "title": "User",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "用户的唯一标识符",
+      "example": 1,
+      "type": "integer"
+    },
+    "username": {
+      "description": "用户名，长度必须在 3 到 50 个字符之间",
+      "example": "john_doe",
+      "minLength": 3,
+      "maxLength": 50,
+      "type": "string"
+    },
+    "age": {
+      "description": "用户的年龄，必须在 0 到 120 之间",
+      "example": 25,
+      "default": 18,
+      "minimum": 0,
+      "maximum": 120,
+      "type": "integer"
+    },
+    "email": {
+      "description": "用户的电子邮件地址",
+      "example": "john.doe@example.com",
+      "pattern": "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "username",
+    "email"
+  ]
+}
+```
